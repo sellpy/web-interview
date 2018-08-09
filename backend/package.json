@@ -1,0 +1,16 @@
+{
+  "name": "sellpy-backend-sandbox",
+  "version": "1.0.0",
+  "description": "A sandbox for code experimentation.",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "start": "node index.js"
+  },
+  "author": "Sellpy",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.3",
+    "lokijs": "^1.5.5"
+  }
+}

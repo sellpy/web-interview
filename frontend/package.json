@@ -1,0 +1,36 @@
+{
+  "name": "frontend-designer-sandbox",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^1.4.3",
+    "@material-ui/icons": "^2.0.1",
+    "final-form": "^4.9.1",
+    "final-form-arrays": "^1.0.4",
+    "immutable": "^3.8.2",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-final-form": "^3.6.5",
+    "react-final-form-arrays": "^1.0.6",
+    "react-redux": "^5.0.7",
+    "react-scripts": "1.1.4",
+    "recompose": "^0.28.2",
+    "redux": "^4.0.0",
+    "redux-devtools-extension": "^2.13.5",
+    "redux-thunk": "^2.3.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "standard": "^11.0.1"
+  },
+  "standard": {
+    "ignore": [
+      "node_modules"
+    ]
+  }
+}
