@@ -36,3 +36,7 @@ Below are some suggested improvements:
 - Indicate that a todolist is completed if all todo items within are completed.
 - Don't require users to press save when an item is added or deleted from the todolist. (Autosave functionality)
 - Add a date for completion to todo items. Indicate how much time is remaining or overdue.
+
+## Submission
+
+Send a link to your forked repository to your contact person at Sellpy.
