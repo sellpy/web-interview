@@ -26,7 +26,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "standard": "^11.0.1"
+    "standard": "^12.0.1"
   },
   "standard": {
     "ignore": [
