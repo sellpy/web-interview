@@ -3,7 +3,6 @@ import './App.css'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
-import {ToDoListForm} from './todos/components/ToDoListForm'
 import {ToDoLists} from './todos/components/ToDoLists'
 
 const MainAppBar = () => {
@@ -34,9 +33,6 @@ class App extends Component {
   render () {
     return <MainWrapper>
       <ToDoLists
-        style={{margin: '1rem'}}
-      />
-      <ToDoListForm
         style={{margin: '1rem'}}
       />
     </MainWrapper>

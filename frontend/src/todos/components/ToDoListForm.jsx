@@ -1,5 +1,4 @@
 import React from 'react'
-import {connect} from 'react-redux'
 import {compose, branch, renderNothing} from 'recompose'
 import {withStyles} from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
@@ -14,7 +13,6 @@ import arrayMutators from 'final-form-arrays'
 import {FieldArray} from 'react-final-form-arrays'
 import {RegularTextField} from '../../shared/FormFields'
 import {required} from '../../shared/FormValidators'
-import {saveToDoList} from '../actions'
 
 const styles = (theme) => ({
   todoLine: {
@@ -36,24 +34,11 @@ const styles = (theme) => ({
 
 export const ToDoListForm = compose(
   withStyles(styles),
-  connect(
-    (state) => {
-      const activeToToList = state.todos.toDoLists.get(state.todos.activeToDoList)
-      return {
-        toDoList: activeToToList ? activeToToList.toJS() : undefined
-      }
-    },
-    (dispatch) => ({
-      onSubmit: async ({id, todos}) => {
-        await dispatch(saveToDoList({listId: id, todos}))
-      }
-    })
-  ),
   branch(
     ({toDoList}) => !toDoList,
     renderNothing
   )
-)(({toDoList, classes, style, onSubmit}) => {
+)(({toDoList, classes, style, saveToDoList}) => {
   return <Card style={style}>
     <CardContent>
       <Typography
@@ -63,7 +48,7 @@ export const ToDoListForm = compose(
         {toDoList.title}
       </Typography>
       <Form
-        onSubmit={onSubmit}
+        onSubmit={saveToDoList}
         initialValues={{id: toDoList.id, todos: toDoList.todos}}
         mutators={{
           ...arrayMutators
