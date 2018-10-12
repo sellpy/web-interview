@@ -35,8 +35,15 @@ export const ToDoLists = compose(
     },
     {
       saveToDoList: ({toDoLists}) => ({id, todos}) => {
-        toDoLists[id].todos = todos
-        return {toDoLists}
+        const toDoListToSave = toDoLists[id]
+        return {toDoLists: {
+          ...toDoLists,
+          [id]: {
+            id,
+            title: toDoListToSave.title,
+            todos
+          }
+        }}
       },
       saveInitialState: () => (toDoLists) => ({
         toDoLists
