@@ -36,7 +36,7 @@ export const ToDoLists = ({ dispatch, style, saveInitialState }) => {
   }, [])
 
   if (!Object.keys(toDoLists).length) return null
-  return <div>
+  return <>
     <Card style={style}>
       <CardContent>
         <Typography
@@ -69,5 +69,5 @@ export const ToDoLists = ({ dispatch, style, saveInitialState }) => {
         })
       }}
     />
-  </div>
+  </>
 }
