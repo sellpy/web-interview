@@ -62,14 +62,10 @@ export const ToDoLists = ({ dispatch, style, saveInitialState }) => {
     <ToDoListForm
       toDoList={toDoLists[activeList]}
       saveToDoList={({ id, todos }) => {
-        const toDoListToSave = toDoLists[id]
+        const listToUpdate = toDoLists[id]
         setToDoLists({
           ...toDoLists,
-          [id]: {
-            id,
-            title: toDoListToSave.title,
-            todos
-          }
+          [id]: { ...listToUpdate, todos }
         })
       }}
     />
