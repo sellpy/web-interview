@@ -26,7 +26,7 @@ const getPersonalTodos = () => {
   }))
 }
 
-export const ToDoLists = ({ dispatch, style, saveInitialState }) => {
+export const ToDoLists = ({ style }) => {
   const [toDoLists, setToDoLists] = useState({})
   const [activeList, setActiveList] = useState()
 
