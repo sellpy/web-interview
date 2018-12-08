@@ -96,7 +96,7 @@ export const ToDoListForm = withStyles(styles)(({ toDoList, classes, style, save
               </Button>
               <Button
                 type='submit'
-                variant='raised'
+                variant='contained'
                 color='primary'
               >
                 Save
