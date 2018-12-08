@@ -38,7 +38,7 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
 
   useEffect(
     () => {
-      return () => setTodos(toDoList.todos)
+      setTodos(toDoList.todos)
     },
     [toDoList.id]
   )
