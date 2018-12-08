@@ -72,7 +72,10 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
                 size='small'
                 color='secondary'
                 className={classes.standardSpace}
-                onClick={() => console.log('TODO: remove field!')}
+                onClick={() => {
+                  todos.splice(index, 1)
+                  setTodos(todos)
+                }}
               >
                 <DeleteIcon />
               </Button>
