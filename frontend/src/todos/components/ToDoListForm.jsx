@@ -7,11 +7,7 @@ import Button from '@material-ui/core/Button'
 import DeleteIcon from '@material-ui/icons/Delete'
 import AddIcon from '@material-ui/icons/Add'
 import Typography from '@material-ui/core/Typography'
-import { Form, Field } from 'react-final-form'
-import arrayMutators from 'final-form-arrays'
-import { FieldArray } from 'react-final-form-arrays'
 import { RegularTextField } from '../../shared/FormFields'
-import { required } from '../../shared/FormValidators'
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -36,79 +32,66 @@ const useStyles = makeStyles((theme) => ({
 
 export const ToDoListForm = ({ toDoList, saveToDoList }) => {
   if (!toDoList) return null
+  const { title, todos } = toDoList
   const classes = useStyles()
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+  }
+
   return <Card className={classes.card}>
     <CardContent>
       <Typography
         variant='headline'
         component='h2'
       >
-        {toDoList.title}
+        {title}
       </Typography>
-      <Form
-        onSubmit={saveToDoList}
-        initialValues={{ id: toDoList.id, todos: toDoList.todos }}
-        mutators={{
-          ...arrayMutators
-        }}
-        render={({
-          handleSubmit,
-          form: { mutators: { push, pop } },
-          submitting,
-          values
-        }) => {
-          return <form
-            onSubmit={handleSubmit}
-            className={classes.form}
+      <form onSubmit={handleSubmit}
+        className={classes.form}
+      >
+        {
+          todos.map((name, index) => <div
+            key={name}
+            className={classes.todoLine}
           >
-            <FieldArray name='todos'>
-              {({ fields }) =>
-                fields.map((name, index) => <div
-                  key={name}
-                  className={classes.todoLine}
-                >
-                  <Typography
-                    className={classes.standardSpace}
-                    variant='title'
-                  >
-                    {index + 1}
-                  </Typography>
-                  <Field
-                    name={`${name}`}
-                    component={RegularTextField}
-                    label='What to do?'
-                    className={classes.textField}
-                    validate={required}
-                  />
-                  <Button
-                    size='small'
-                    color='secondary'
-                    className={classes.standardSpace}
-                    onClick={() => fields.remove(index)}
-                  >
-                    <DeleteIcon />
-                  </Button>
-                </div>
-                )}
-            </FieldArray>
-            <CardActions>
-              <Button
-                type='button'
-                color='primary'
-                onClick={() => push('todos', undefined)}>
+            <Typography
+              className={classes.standardSpace}
+              variant='title'
+            >
+              {index + 1}
+            </Typography>
+            <RegularTextField
+              name={`${name}`}
+              label='What to do?'
+              className={classes.textField}
+            />
+            <Button
+              size='small'
+              color='secondary'
+              className={classes.standardSpace}
+              onClick={() => console.log('TODO: remove field!')}
+            >
+              <DeleteIcon />
+            </Button>
+          </div>
+          )}
+        <CardActions>
+          <Button
+            type='button'
+            color='primary'
+            onClick={() => console.log('TODO: add field')}>
                   Add Todo <AddIcon />
-              </Button>
-              <Button
-                type='submit'
-                variant='contained'
-                color='primary'
-              >
+          </Button>
+          <Button
+            type='submit'
+            variant='contained'
+            color='primary'
+          >
                 Save
-              </Button>
-            </CardActions>
-          </form>
-        }}
-      />
+          </Button>
+        </CardActions>
+      </form>
     </CardContent>
   </Card>
 }
