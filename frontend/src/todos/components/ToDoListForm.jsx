@@ -9,7 +9,7 @@ import AddIcon from '@material-ui/icons/Add'
 import Typography from '@material-ui/core/Typography'
 import { TextField } from '../../shared/FormFields'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   card: {
     margin: '1rem'
   },
@@ -36,73 +36,64 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
   const classes = useStyles()
   const [todos, setTodos] = useState(toDoList.todos)
 
-  useEffect(() => {
-    return () => setTodos(toDoList.todos)
-  }, [toDoList.id])
+  useEffect(
+    () => {
+      return () => setTodos(toDoList.todos)
+    },
+    [toDoList.id]
+  )
 
-  const handleSubmit = (event) => {
+  const handleSubmit = event => {
     event.preventDefault()
   }
 
-  return <Card className={classes.card}>
-    <CardContent>
-      <Typography
-        variant='headline'
-        component='h2'
-      >
-        {toDoList.title}
-      </Typography>
-      <form onSubmit={handleSubmit}
-        className={classes.form}
-      >
-        {
-          todos.map((name, index) => <div
-            key={index}
-            className={classes.todoLine}
-          >
-            <Typography
-              className={classes.standardSpace}
-              variant='title'
-            >
-              {index + 1}
-            </Typography>
-            <TextField
-              label='What to do?'
-              value={name}
-              onChange={(event) => {
-                todos[index] = event.target.value
-                setTodos(todos)
-              }}
-              className={classes.textField}
-            />
+  return (
+    <Card className={classes.card}>
+      <CardContent>
+        <Typography variant='headline' component='h2'>
+          {toDoList.title}
+        </Typography>
+        <form onSubmit={handleSubmit} className={classes.form}>
+          {todos.map((name, index) => (
+            <div key={index} className={classes.todoLine}>
+              <Typography className={classes.standardSpace} variant='title'>
+                {index + 1}
+              </Typography>
+              <TextField
+                label='What to do?'
+                value={name}
+                onChange={event => {
+                  todos[index] = event.target.value
+                  setTodos(todos)
+                }}
+                className={classes.textField}
+              />
+              <Button
+                size='small'
+                color='secondary'
+                className={classes.standardSpace}
+                onClick={() => console.log('TODO: remove field!')}
+              >
+                <DeleteIcon />
+              </Button>
+            </div>
+          ))}
+          <CardActions>
             <Button
-              size='small'
-              color='secondary'
-              className={classes.standardSpace}
-              onClick={() => console.log('TODO: remove field!')}
+              type='button'
+              color='primary'
+              onClick={() => {
+                setTodos([...todos, ''])
+              }}
             >
-              <DeleteIcon />
+              Add Todo <AddIcon />
             </Button>
-          </div>
-          )}
-        <CardActions>
-          <Button
-            type='button'
-            color='primary'
-            onClick={() => {
-              setTodos([...todos, ''])
-            }}>
-            Add Todo <AddIcon />
-          </Button>
-          <Button
-            type='submit'
-            variant='contained'
-            color='primary'
-          >
-                Save
-          </Button>
-        </CardActions>
-      </form>
-    </CardContent>
-  </Card>
+            <Button type='submit' variant='contained' color='primary'>
+              Save
+            </Button>
+          </CardActions>
+        </form>
+      </CardContent>
+    </Card>
+  )
 }
