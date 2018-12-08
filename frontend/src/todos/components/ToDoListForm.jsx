@@ -1,5 +1,4 @@
 import React from 'react'
-import { compose, branch, renderNothing } from 'recompose'
 import { withStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
@@ -32,13 +31,8 @@ const styles = (theme) => ({
   }
 })
 
-export const ToDoListForm = compose(
-  withStyles(styles),
-  branch(
-    ({ toDoList }) => !toDoList,
-    renderNothing
-  )
-)(({ toDoList, classes, style, saveToDoList }) => {
+export const ToDoListForm = withStyles(styles)(({ toDoList, classes, style, saveToDoList }) => {
+  if (!toDoList) return null
   return <Card style={style}>
     <CardContent>
       <Typography
