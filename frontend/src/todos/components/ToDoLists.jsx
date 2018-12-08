@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react'
-import { compose, withStateHandlers } from 'recompose'
+import React, { useState, useEffect } from 'react'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import List from '@material-ui/core/List'
@@ -27,37 +26,15 @@ const getPersonalTodos = () => {
   }))
 }
 
-export const ToDoLists = compose(
-  withStateHandlers(
-    {
-      toDoLists: {},
-      activeList: null
-    },
-    {
-      saveToDoList: ({ toDoLists }) => ({ id, todos }) => {
-        const toDoListToSave = toDoLists[id]
-        return { toDoLists: {
-          ...toDoLists,
-          [id]: {
-            id,
-            title: toDoListToSave.title,
-            todos
-          }
-        } }
-      },
-      saveInitialState: () => (toDoLists) => ({
-        toDoLists
-      }),
-      setActiveList: () => (listId) => ({
-        activeList: listId
-      })
-    }
-  )
-)(({ dispatch, toDoLists, saveToDoList, activeList, setActiveList, style, saveInitialState }) => {
+export const ToDoLists = ({ dispatch, style, saveInitialState }) => {
+  const [toDoLists, setToDoLists] = useState({})
+  const [activeList, setActiveList] = useState()
+
   useEffect(() => {
     getPersonalTodos()
-      .then(saveInitialState)
+      .then(setToDoLists)
   }, [])
+
   if (!Object.keys(toDoLists).length) return null
   return <div>
     <Card style={style}>
@@ -83,8 +60,18 @@ export const ToDoLists = compose(
       </CardContent>
     </Card>
     <ToDoListForm
-      saveToDoList={saveToDoList}
       toDoList={toDoLists[activeList]}
+      saveToDoList={({ id, todos }) => {
+        const toDoListToSave = toDoLists[id]
+        setToDoLists({
+          ...toDoLists,
+          [id]: {
+            id,
+            title: toDoListToSave.title,
+            todos
+          }
+        })
+      }}
     />
   </div>
-})
+}
