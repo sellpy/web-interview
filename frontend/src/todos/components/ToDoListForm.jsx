@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/styles'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
@@ -35,6 +35,10 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
 
   const classes = useStyles()
   const [todos, setTodos] = useState(toDoList.todos)
+
+  useEffect(() => {
+    return () => setTodos(toDoList.todos)
+  }, [toDoList.id])
 
   const handleSubmit = (event) => {
     event.preventDefault()
