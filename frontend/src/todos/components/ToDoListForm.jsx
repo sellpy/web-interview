@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/styles'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
@@ -32,8 +32,9 @@ const useStyles = makeStyles((theme) => ({
 
 export const ToDoListForm = ({ toDoList, saveToDoList }) => {
   if (!toDoList) return null
-  const { title, todos } = toDoList
+
   const classes = useStyles()
+  const [todos, setTodos] = useState(toDoList.todos)
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -45,14 +46,14 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
         variant='headline'
         component='h2'
       >
-        {title}
+        {toDoList.title}
       </Typography>
       <form onSubmit={handleSubmit}
         className={classes.form}
       >
         {
           todos.map((name, index) => <div
-            key={name}
+            key={index}
             className={classes.todoLine}
           >
             <Typography
@@ -80,8 +81,10 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
           <Button
             type='button'
             color='primary'
-            onClick={() => console.log('TODO: add field')}>
-                  Add Todo <AddIcon />
+            onClick={() => {
+              setTodos([...todos, ''])
+            }}>
+            Add Todo <AddIcon />
           </Button>
           <Button
             type='submit'
