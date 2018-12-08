@@ -1,5 +1,5 @@
-import React from 'react'
-import { compose, lifecycle, withStateHandlers } from 'recompose'
+import React, { useEffect } from 'react'
+import { compose, withStateHandlers } from 'recompose'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import List from '@material-ui/core/List'
@@ -52,14 +52,12 @@ export const ToDoLists = compose(
         activeList: listId
       })
     }
-  ),
-  lifecycle({
-    componentDidMount () {
-      getPersonalTodos()
-        .then((toDoLists) => this.props.saveInitialState(toDoLists))
-    }
-  })
-)(({ dispatch, toDoLists, saveToDoList, activeList, setActiveList, style }) => {
+  )
+)(({ dispatch, toDoLists, saveToDoList, activeList, setActiveList, style, saveInitialState }) => {
+  useEffect(() => {
+    getPersonalTodos()
+      .then(saveInitialState)
+  }, [])
   if (!Object.keys(toDoLists).length) return null
   return <div>
     <Card style={style}>
