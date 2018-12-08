@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button'
 import DeleteIcon from '@material-ui/icons/Delete'
 import AddIcon from '@material-ui/icons/Add'
 import Typography from '@material-ui/core/Typography'
-import { RegularTextField } from '../../shared/FormFields'
+import { TextField } from '../../shared/FormFields'
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -66,9 +66,13 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
             >
               {index + 1}
             </Typography>
-            <RegularTextField
-              name={`${name}`}
+            <TextField
               label='What to do?'
+              value={name}
+              onChange={(event) => {
+                todos[index] = event.target.value
+                setTodos(todos)
+              }}
               className={classes.textField}
             />
             <Button
