@@ -45,6 +45,7 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
 
   const handleSubmit = event => {
     event.preventDefault()
+    saveToDoList(toDoList.id, { todos })
   }
 
   return (
