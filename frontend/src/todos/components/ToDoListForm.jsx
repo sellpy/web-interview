@@ -1,5 +1,5 @@
 import React from 'react'
-import { withStyles } from '@material-ui/styles'
+import { makeStyles } from '@material-ui/styles'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import CardActions from '@material-ui/core/CardActions'
@@ -13,7 +13,7 @@ import { FieldArray } from 'react-final-form-arrays'
 import { RegularTextField } from '../../shared/FormFields'
 import { required } from '../../shared/FormValidators'
 
-const styles = (theme) => ({
+const useStyles = makeStyles((theme) => ({
   todoLine: {
     display: 'flex',
     alignItems: 'center'
@@ -29,10 +29,11 @@ const styles = (theme) => ({
     flexDirection: 'column',
     flexGrow: 1
   }
-})
+}))
 
-export const ToDoListForm = withStyles(styles)(({ toDoList, classes, style, saveToDoList }) => {
+export const ToDoListForm = ({ toDoList, style, saveToDoList }) => {
   if (!toDoList) return null
+  const classes = useStyles()
   return <Card style={style}>
     <CardContent>
       <Typography
@@ -107,4 +108,4 @@ export const ToDoListForm = withStyles(styles)(({ toDoList, classes, style, save
       />
     </CardContent>
   </Card>
-})
+}
