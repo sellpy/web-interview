@@ -1,5 +1,5 @@
 import React from 'react'
-import { compose, lifecycle, withStateHandlers, branch, renderNothing } from 'recompose'
+import { compose, lifecycle, withStateHandlers } from 'recompose'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import List from '@material-ui/core/List'
@@ -58,12 +58,9 @@ export const ToDoLists = compose(
       getPersonalTodos()
         .then((toDoLists) => this.props.saveInitialState(toDoLists))
     }
-  }),
-  branch(
-    ({ toDoLists }) => Object.keys(toDoLists).length === 0,
-    renderNothing
-  )
+  })
 )(({ dispatch, toDoLists, saveToDoList, activeList, setActiveList, style }) => {
+  if (!Object.keys(toDoLists).length) return null
   return <div>
     <Card style={style}>
       <CardContent>
