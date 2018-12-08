@@ -90,7 +90,6 @@ export const ToDoLists = compose(
     <ToDoListForm
       saveToDoList={saveToDoList}
       toDoList={toDoLists[activeList]}
-      style={{ margin: '1rem' }}
     />
   </div>
 })

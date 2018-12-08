@@ -14,6 +14,9 @@ import { RegularTextField } from '../../shared/FormFields'
 import { required } from '../../shared/FormValidators'
 
 const useStyles = makeStyles((theme) => ({
+  card: {
+    margin: '1rem'
+  },
   todoLine: {
     display: 'flex',
     alignItems: 'center'
@@ -31,10 +34,10 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-export const ToDoListForm = ({ toDoList, style, saveToDoList }) => {
+export const ToDoListForm = ({ toDoList, saveToDoList }) => {
   if (!toDoList) return null
   const classes = useStyles()
-  return <Card style={style}>
+  return <Card className={classes.card}>
     <CardContent>
       <Typography
         variant='headline'
