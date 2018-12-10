@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import List from '@material-ui/core/List'
@@ -36,7 +36,7 @@ export const ToDoLists = ({ style }) => {
   }, [])
 
   if (!Object.keys(toDoLists).length) return null
-  return <>
+  return <Fragment>
     <Card style={style}>
       <CardContent>
         <Typography
@@ -69,5 +69,5 @@ export const ToDoLists = ({ style }) => {
         })
       }}
     />
-  </>
+  </Fragment>
 }
