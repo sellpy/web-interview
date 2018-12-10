@@ -36,6 +36,7 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
   const classes = useStyles()
   const [todos, setTodos] = useState(toDoList.todos)
 
+  // clears any pending todos when the id changes
   useEffect(
     () => {
       setTodos(toDoList.todos)
