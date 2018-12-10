@@ -1,6 +1,6 @@
 import React from 'react'
-import {compose, branch, renderNothing} from 'recompose'
-import {withStyles} from '@material-ui/core/styles'
+import { compose, branch, renderNothing } from 'recompose'
+import { withStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import CardActions from '@material-ui/core/CardActions'
@@ -8,11 +8,11 @@ import Button from '@material-ui/core/Button'
 import DeleteIcon from '@material-ui/icons/Delete'
 import AddIcon from '@material-ui/icons/Add'
 import Typography from '@material-ui/core/Typography'
-import {Form, Field} from 'react-final-form'
+import { Form, Field } from 'react-final-form'
 import arrayMutators from 'final-form-arrays'
-import {FieldArray} from 'react-final-form-arrays'
-import {RegularTextField} from '../../shared/FormFields'
-import {required} from '../../shared/FormValidators'
+import { FieldArray } from 'react-final-form-arrays'
+import { RegularTextField } from '../../shared/FormFields'
+import { required } from '../../shared/FormValidators'
 
 const styles = (theme) => ({
   todoLine: {
@@ -35,10 +35,10 @@ const styles = (theme) => ({
 export const ToDoListForm = compose(
   withStyles(styles),
   branch(
-    ({toDoList}) => !toDoList,
+    ({ toDoList }) => !toDoList,
     renderNothing
   )
-)(({toDoList, classes, style, saveToDoList}) => {
+)(({ toDoList, classes, style, saveToDoList }) => {
   return <Card style={style}>
     <CardContent>
       <Typography
@@ -49,13 +49,13 @@ export const ToDoListForm = compose(
       </Typography>
       <Form
         onSubmit={saveToDoList}
-        initialValues={{id: toDoList.id, todos: toDoList.todos}}
+        initialValues={{ id: toDoList.id, todos: toDoList.todos }}
         mutators={{
           ...arrayMutators
         }}
         render={({
           handleSubmit,
-          form: {mutators: {push, pop}},
+          form: { mutators: { push, pop } },
           submitting,
           values
         }) => {
@@ -64,7 +64,7 @@ export const ToDoListForm = compose(
             className={classes.form}
           >
             <FieldArray name='todos'>
-              {({fields}) =>
+              {({ fields }) =>
                 fields.map((name, index) => <div
                   key={name}
                   className={classes.todoLine}

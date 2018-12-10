@@ -1,5 +1,5 @@
 import React from 'react'
-import {compose, lifecycle, withStateHandlers, branch, renderNothing} from 'recompose'
+import { compose, lifecycle, withStateHandlers, branch, renderNothing } from 'recompose'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import List from '@material-ui/core/List'
@@ -8,7 +8,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ReceiptIcon from '@material-ui/icons/Receipt'
 import Typography from '@material-ui/core/Typography'
-import {ToDoListForm} from './ToDoListForm'
+import { ToDoListForm } from './ToDoListForm'
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -34,16 +34,16 @@ export const ToDoLists = compose(
       activeList: null
     },
     {
-      saveToDoList: ({toDoLists}) => ({id, todos}) => {
+      saveToDoList: ({ toDoLists }) => ({ id, todos }) => {
         const toDoListToSave = toDoLists[id]
-        return {toDoLists: {
+        return { toDoLists: {
           ...toDoLists,
           [id]: {
             id,
             title: toDoListToSave.title,
             todos
           }
-        }}
+        } }
       },
       saveInitialState: () => (toDoLists) => ({
         toDoLists
@@ -60,10 +60,10 @@ export const ToDoLists = compose(
     }
   }),
   branch(
-    ({toDoLists}) => Object.keys(toDoLists).length === 0,
+    ({ toDoLists }) => Object.keys(toDoLists).length === 0,
     renderNothing
   )
-)(({dispatch, toDoLists, saveToDoList, activeList, setActiveList, style}) => {
+)(({ dispatch, toDoLists, saveToDoList, activeList, setActiveList, style }) => {
   return <div>
     <Card style={style}>
       <CardContent>
@@ -90,7 +90,7 @@ export const ToDoLists = compose(
     <ToDoListForm
       saveToDoList={saveToDoList}
       toDoList={toDoLists[activeList]}
-      style={{margin: '1rem'}}
+      style={{ margin: '1rem' }}
     />
   </div>
 })
