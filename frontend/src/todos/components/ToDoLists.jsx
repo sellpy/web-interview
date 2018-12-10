@@ -1,5 +1,4 @@
-import React from 'react'
-import { compose, lifecycle, withStateHandlers, branch, renderNothing } from 'recompose'
+import React, { Fragment, useState, useEffect } from 'react'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import List from '@material-ui/core/List'
@@ -27,44 +26,17 @@ const getPersonalTodos = () => {
   }))
 }
 
-export const ToDoLists = compose(
-  withStateHandlers(
-    {
-      toDoLists: {},
-      activeList: null
-    },
-    {
-      saveToDoList: ({ toDoLists }) => ({ id, todos }) => {
-        const toDoListToSave = toDoLists[id]
-        return { toDoLists: {
-          ...toDoLists,
-          [id]: {
-            id,
-            title: toDoListToSave.title,
-            todos
-          }
-        } }
-      },
-      saveInitialState: () => (toDoLists) => ({
-        toDoLists
-      }),
-      setActiveList: () => (listId) => ({
-        activeList: listId
-      })
-    }
-  ),
-  lifecycle({
-    componentDidMount () {
-      getPersonalTodos()
-        .then((toDoLists) => this.props.saveInitialState(toDoLists))
-    }
-  }),
-  branch(
-    ({ toDoLists }) => Object.keys(toDoLists).length === 0,
-    renderNothing
-  )
-)(({ dispatch, toDoLists, saveToDoList, activeList, setActiveList, style }) => {
-  return <div>
+export const ToDoLists = ({ style }) => {
+  const [toDoLists, setToDoLists] = useState({})
+  const [activeList, setActiveList] = useState()
+
+  useEffect(() => {
+    getPersonalTodos()
+      .then(setToDoLists)
+  }, [])
+
+  if (!Object.keys(toDoLists).length) return null
+  return <Fragment>
     <Card style={style}>
       <CardContent>
         <Typography
@@ -88,9 +60,14 @@ export const ToDoLists = compose(
       </CardContent>
     </Card>
     <ToDoListForm
-      saveToDoList={saveToDoList}
       toDoList={toDoLists[activeList]}
-      style={{ margin: '1rem' }}
+      saveToDoList={({ id, todos }) => {
+        const listToUpdate = toDoLists[id]
+        setToDoLists({
+          ...toDoLists,
+          [id]: { ...listToUpdate, todos }
+        })
+      }}
     />
-  </div>
-})
+  </Fragment>
+}
