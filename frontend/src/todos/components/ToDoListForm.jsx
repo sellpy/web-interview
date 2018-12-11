@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/styles'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
@@ -7,13 +7,9 @@ import Button from '@material-ui/core/Button'
 import DeleteIcon from '@material-ui/icons/Delete'
 import AddIcon from '@material-ui/icons/Add'
 import Typography from '@material-ui/core/Typography'
-import { Form, Field } from 'react-final-form'
-import arrayMutators from 'final-form-arrays'
-import { FieldArray } from 'react-final-form-arrays'
-import { RegularTextField } from '../../shared/FormFields'
-import { required } from '../../shared/FormValidators'
+import { TextField } from '../../shared/FormFields'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   card: {
     margin: '1rem'
   },
@@ -36,79 +32,73 @@ const useStyles = makeStyles((theme) => ({
 
 export const ToDoListForm = ({ toDoList, saveToDoList }) => {
   if (!toDoList) return null
+
   const classes = useStyles()
-  return <Card className={classes.card}>
-    <CardContent>
-      <Typography
-        variant='headline'
-        component='h2'
-      >
-        {toDoList.title}
-      </Typography>
-      <Form
-        onSubmit={saveToDoList}
-        initialValues={{ id: toDoList.id, todos: toDoList.todos }}
-        mutators={{
-          ...arrayMutators
-        }}
-        render={({
-          handleSubmit,
-          form: { mutators: { push, pop } },
-          submitting,
-          values
-        }) => {
-          return <form
-            onSubmit={handleSubmit}
-            className={classes.form}
-          >
-            <FieldArray name='todos'>
-              {({ fields }) =>
-                fields.map((name, index) => <div
-                  key={name}
-                  className={classes.todoLine}
-                >
-                  <Typography
-                    className={classes.standardSpace}
-                    variant='title'
-                  >
-                    {index + 1}
-                  </Typography>
-                  <Field
-                    name={`${name}`}
-                    component={RegularTextField}
-                    label='What to do?'
-                    className={classes.textField}
-                    validate={required}
-                  />
-                  <Button
-                    size='small'
-                    color='secondary'
-                    className={classes.standardSpace}
-                    onClick={() => fields.remove(index)}
-                  >
-                    <DeleteIcon />
-                  </Button>
-                </div>
-                )}
-            </FieldArray>
-            <CardActions>
+  const [todos, setTodos] = useState(toDoList.todos)
+
+  // clears any pending todos when the id changes
+  useEffect(
+    () => {
+      setTodos(toDoList.todos)
+    },
+    [toDoList.id]
+  )
+
+  const handleSubmit = event => {
+    event.preventDefault()
+    saveToDoList(toDoList.id, { todos })
+  }
+
+  return (
+    <Card className={classes.card}>
+      <CardContent>
+        <Typography variant='headline' component='h2'>
+          {toDoList.title}
+        </Typography>
+        <form onSubmit={handleSubmit} className={classes.form}>
+          {todos.map((name, index) => (
+            <div key={index} className={classes.todoLine}>
+              <Typography className={classes.standardSpace} variant='title'>
+                {index + 1}
+              </Typography>
+              <TextField
+                label='What to do?'
+                value={name}
+                onChange={event => {
+                  todos[index] = event.target.value
+                  setTodos(todos)
+                }}
+                className={classes.textField}
+              />
               <Button
-                type='button'
-                color='primary'
-                onClick={() => push('todos', undefined)}>
-                  Add Todo <AddIcon />
-              </Button>
-              <Button
-                type='submit'
-                variant='contained'
-                color='primary'
+                size='small'
+                color='secondary'
+                className={classes.standardSpace}
+                onClick={() => {
+                  todos.splice(index, 1)
+                  setTodos(todos)
+                }}
               >
-                Save
+                <DeleteIcon />
               </Button>
-            </CardActions>
-          </form>
-        }}
-      />
-    </CardContent>
-  </Card>
+            </div>
+          ))}
+          <CardActions>
+            <Button
+              type='button'
+              color='primary'
+              onClick={() => {
+                setTodos([...todos, ''])
+              }}
+            >
+              Add Todo <AddIcon />
+            </Button>
+            <Button type='submit' variant='contained' color='primary'>
+              Save
+            </Button>
+          </CardActions>
+        </form>
+      </CardContent>
+    </Card>
+  )
 }
