@@ -13,7 +13,7 @@ import { FieldArray } from 'react-final-form-arrays'
 import { RegularTextField } from '../../shared/FormFields'
 import { required } from '../../shared/FormValidators'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
   card: {
     margin: '1rem'
   },
@@ -25,14 +25,14 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1
   },
   standardSpace: {
-    margin: theme.spacing.unit
+    margin: '8px'
   },
   form: {
     display: 'flex',
     flexDirection: 'column',
     flexGrow: 1
   }
-}))
+})
 
 export const ToDoListForm = ({ toDoList, saveToDoList }) => {
   if (!toDoList) return null
