@@ -9,7 +9,7 @@ import AddIcon from '@material-ui/icons/Add'
 import Typography from '@material-ui/core/Typography'
 import { TextField } from '../../shared/FormFields'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   card: {
     margin: '1rem'
   },
@@ -21,14 +21,14 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1
   },
   standardSpace: {
-    margin: theme.spacing.unit
+    margin: '8px'
   },
   form: {
     display: 'flex',
     flexDirection: 'column',
     flexGrow: 1
   }
-}))
+})
 
 export const ToDoListForm = ({ toDoList, saveToDoList }) => {
   if (!toDoList) return null
