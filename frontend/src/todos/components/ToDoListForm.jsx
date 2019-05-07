@@ -31,8 +31,6 @@ const useStyles = makeStyles({
 })
 
 export const ToDoListForm = ({ toDoList, saveToDoList }) => {
-  if (!toDoList) return null
-
   const classes = useStyles()
   const [todos, setTodos] = useState(toDoList.todos)
 

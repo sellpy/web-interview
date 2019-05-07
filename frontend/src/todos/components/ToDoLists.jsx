@@ -59,7 +59,7 @@ export const ToDoLists = ({ style }) => {
         </List>
       </CardContent>
     </Card>
-    <ToDoListForm
+    {toDoLists[activeList] && <ToDoListForm
       toDoList={toDoLists[activeList]}
       saveToDoList={(id, { todos }) => {
         const listToUpdate = toDoLists[id]
@@ -68,6 +68,6 @@ export const ToDoLists = ({ style }) => {
           [id]: { ...listToUpdate, todos }
         })
       }}
-    />
+    />}
   </Fragment>
 }
