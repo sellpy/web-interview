@@ -39,7 +39,7 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
     () => {
       setTodos(toDoList.todos)
     },
-    [toDoList.id]
+    [toDoList.todos]
   )
 
   const handleSubmit = event => {
