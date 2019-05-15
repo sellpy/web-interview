@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/styles'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
@@ -33,14 +33,6 @@ const useStyles = makeStyles({
 export const ToDoListForm = ({ toDoList, saveToDoList }) => {
   const classes = useStyles()
   const [todos, setTodos] = useState(toDoList.todos)
-
-  // make sure todos state stays in sync when another list is selected
-  useEffect(
-    () => {
-      setTodos(toDoList.todos)
-    },
-    [toDoList.todos]
-  )
 
   const handleSubmit = event => {
     event.preventDefault()
