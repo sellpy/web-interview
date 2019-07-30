@@ -13,14 +13,14 @@ NodeJS - https://nodejs.org/en/download/
 ### To start the backend:
 
  - Navigate to the backend folder
- - Run 'npm install'
+ - Run 'npm ci'
  - Run 'npm start'
 
 ### To start the frontend:
 
  - Navigate to the frontend folder
  - Run 'npm install'
- - Run 'npm start'
+ - Run 'npm ci'
 
  A browsertab will automatically open and load the app.
 
