@@ -19,8 +19,8 @@ NodeJS - https://nodejs.org/en/download/
 ### To start the frontend:
 
  - Navigate to the frontend folder
- - Run 'npm install'
  - Run 'npm ci'
+ - Run 'npm start'
 
  A browsertab will automatically open and load the app.
 
