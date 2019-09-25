@@ -7,9 +7,11 @@ import Button from '@material-ui/core/Button'
 import DeleteIcon from '@material-ui/icons/Delete'
 import AddIcon from '@material-ui/icons/Add'
 import Typography from '@material-ui/core/Typography'
-import { TextField } from '../../shared/FormFields'
-import axios from 'axios';
+import { CustomTextField } from '../../shared/FormFields'
+import TextField from '@material-ui/core/TextField';
 import { Checkbox } from '@material-ui/core';
+import axios from 'axios';
+import debounce from 'lodash.debounce';
 
 const useStyles = makeStyles({
   card: {
@@ -20,7 +22,13 @@ const useStyles = makeStyles({
     alignItems: 'center'
   },
   textField: {
-    flexGrow: 1
+    flexGrow: 1,
+  },
+  soonDue: {
+    backgroundColor: 'yellow',
+  },
+  overDue: {
+    backgroundColor: 'red',
   },
   standardSpace: {
     margin: '8px'
@@ -31,6 +39,12 @@ const useStyles = makeStyles({
     flexGrow: 1
   }
 })
+
+const isTodoDue = (todo, daysLeft) => {
+  if (todo.done || !todo.dueDate) return false;
+  let dueDate = new Date(todo.dueDate);
+  return dueDate.setDate(dueDate.getDate() - daysLeft) < new Date();
+}
 
 const updateTodo = (todo) => {
   return axios.put('http://localhost:3001/todo', todo)
@@ -49,7 +63,9 @@ const addTodo = (listId) => {
 
 export const ToDoListForm = ({ toDoList, onUpdate }) => {
   const classes = useStyles();
-  const [todos, setTodos] = useState(toDoList.todos);
+  const setTodos = (todos) => {
+    onUpdate(todos);
+  }
 
   return (
     <Card className={classes.card}>
@@ -58,24 +74,43 @@ export const ToDoListForm = ({ toDoList, onUpdate }) => {
           {toDoList.title}
         </Typography>
         <form className={classes.form}>
-          {todos.map((todo, index) => (
+          {toDoList.todos.map((todo, index) => (
             <div key={index} className={classes.todoLine}>
               <Typography className={classes.standardSpace} variant='title'>
                 {index + 1}
               </Typography>
-              <TextField
+              <CustomTextField
                 label='What to do?'
                 value={todo.title}
-                onChange={event => {
+                onChange={event => { // TODO: Should be debounced
                   updateTodo({ ...todo, title: event.target.value })
                     .then((updatedTodo) =>
                       setTodos([ // immutable update
-                        ...todos.slice(0, index),
+                        ...toDoList.todos.slice(0, index),
                         updatedTodo,
-                        ...todos.slice(index + 1)
+                        ...toDoList.todos.slice(index + 1)
                       ]))
                 }}
                 className={classes.textField}
+              />
+              <TextField
+                label="Due date:"
+                className={classes.textField}
+                className={isTodoDue(todo, 7) ? (isTodoDue(todo, 0) ? classes.overDue : classes.soonDue) : ''}
+                value={todo.dueDate}
+                type="date"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={event => { 
+                  updateTodo({ ...todo, dueDate: event.target.value })
+                    .then((updatedTodo) =>
+                      setTodos([ // immutable update
+                        ...toDoList.todos.slice(0, index),
+                        updatedTodo,
+                        ...toDoList.todos.slice(index + 1)
+                      ]))
+                }}
               />
               <Checkbox
                 checked={todo.done}
@@ -83,10 +118,10 @@ export const ToDoListForm = ({ toDoList, onUpdate }) => {
                   updateTodo({ ...todo, done: event.target.checked })
                     .then((updatedTodo) =>
                       setTodos([ // immutable update
-                        ...todos.slice(0, index),
+                        ...toDoList.todos.slice(0, index),
                         updatedTodo,
-                        ...todos.slice(index + 1)
-                      ])).then(_ => onUpdate())
+                        ...toDoList.todos.slice(index + 1)
+                      ]))
                 }}
               >
               </Checkbox>
@@ -96,7 +131,7 @@ export const ToDoListForm = ({ toDoList, onUpdate }) => {
                 className={classes.standardSpace}
                 onClick={() => removeTodo(todo.id)
                   .then((removedTodo) =>
-                    setTodos([...todos].filter(todo => todo.id !== removedTodo.id)))}
+                    setTodos([...toDoList.todos].filter(todo => todo.id !== removedTodo.id)))}
               >
                 <DeleteIcon />
               </Button>
@@ -107,7 +142,7 @@ export const ToDoListForm = ({ toDoList, onUpdate }) => {
               type='button'
               color='primary'
               onClick={() => addTodo(toDoList.id).then((todo) =>
-                            setTodos([...todos, todo]))}
+                            setTodos([...toDoList.todos, todo]))}
             >
                 Add Todo < AddIcon />
             </Button>

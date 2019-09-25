@@ -19,13 +19,19 @@ const getPersonalTodos = () => {
 export const ToDoLists = ({ style }) => {
   const [toDoLists, setToDoLists] = useState({})
   const [activeList, setActiveList] = useState()
-  const getTodos = () => {
-    getPersonalTodos()
-      .then(setToDoLists)
+  const updateLists = (updatedTodos) => {
+    setToDoLists({
+      ...toDoLists,
+      [activeList]: {
+        ...toDoLists[activeList],
+        todos: updatedTodos
+      }
+    })
   }
   useEffect(() => {
-    getTodos();
-  }, [])
+    getPersonalTodos()
+      .then(setToDoLists)
+  }, []);
 
 
   if (!Object.keys(toDoLists).length) return null
@@ -58,7 +64,7 @@ export const ToDoLists = ({ style }) => {
     {toDoLists[activeList] && <ToDoListForm
       key={activeList} // use key to make React recreate component to reset internal state
       toDoList={toDoLists[activeList]}
-      onUpdate={() => getTodos()}
+      onUpdate={updateLists}
     />}
   </Fragment>
 }
