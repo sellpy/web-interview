@@ -8,6 +8,8 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import AddIcon from '@material-ui/icons/Add'
 import Typography from '@material-ui/core/Typography'
 import { TextField } from '../../shared/FormFields'
+import axios from 'axios';
+import { Checkbox } from '@material-ui/core';
 
 const useStyles = makeStyles({
   card: {
@@ -30,14 +32,24 @@ const useStyles = makeStyles({
   }
 })
 
-export const ToDoListForm = ({ toDoList, saveToDoList }) => {
-  const classes = useStyles()
-  const [todos, setTodos] = useState(toDoList.todos)
+const updateTodo = (todo) => {
+  return axios.put('http://localhost:3001/todo', todo)
+    .then(res => res.data);
+}
 
-  const handleSubmit = event => {
-    event.preventDefault()
-    saveToDoList(toDoList.id, { todos })
-  }
+const removeTodo = (todoId) => {
+  return axios.delete('http://localhost:3001/todo/' + todoId)
+    .then(res => res.data);
+}
+
+const addTodo = (listId) => {
+  return axios.post('http://localhost:3001/todo-list/' + listId + '/todo')
+    .then(res => res.data);
+}
+
+export const ToDoListForm = ({ toDoList, onUpdate }) => {
+  const classes = useStyles();
+  const [todos, setTodos] = useState(toDoList.todos);
 
   return (
     <Card className={classes.card}>
@@ -45,34 +57,46 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
         <Typography variant='headline' component='h2'>
           {toDoList.title}
         </Typography>
-        <form onSubmit={handleSubmit} className={classes.form}>
-          {todos.map((name, index) => (
+        <form className={classes.form}>
+          {todos.map((todo, index) => (
             <div key={index} className={classes.todoLine}>
               <Typography className={classes.standardSpace} variant='title'>
                 {index + 1}
               </Typography>
               <TextField
                 label='What to do?'
-                value={name}
+                value={todo.title}
                 onChange={event => {
-                  setTodos([ // immutable update
-                    ...todos.slice(0, index),
-                    event.target.value,
-                    ...todos.slice(index + 1)
-                  ])
+                  updateTodo({ ...todo, title: event.target.value })
+                    .then((updatedTodo) =>
+                      setTodos([ // immutable update
+                        ...todos.slice(0, index),
+                        updatedTodo,
+                        ...todos.slice(index + 1)
+                      ]))
                 }}
                 className={classes.textField}
               />
+              <Checkbox
+                checked={todo.done}
+                onChange={event => {
+                  updateTodo({ ...todo, done: event.target.checked })
+                    .then((updatedTodo) =>
+                      setTodos([ // immutable update
+                        ...todos.slice(0, index),
+                        updatedTodo,
+                        ...todos.slice(index + 1)
+                      ])).then(_ => onUpdate())
+                }}
+              >
+              </Checkbox>
               <Button
                 size='small'
                 color='secondary'
                 className={classes.standardSpace}
-                onClick={() => {
-                  setTodos([ // immutable delete
-                    ...todos.slice(0, index),
-                    ...todos.slice(index + 1)
-                  ])
-                }}
+                onClick={() => removeTodo(todo.id)
+                  .then((removedTodo) =>
+                    setTodos([...todos].filter(todo => todo.id !== removedTodo.id)))}
               >
                 <DeleteIcon />
               </Button>
@@ -82,14 +106,10 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
             <Button
               type='button'
               color='primary'
-              onClick={() => {
-                setTodos([...todos, ''])
-              }}
+              onClick={() => addTodo(toDoList.id).then((todo) =>
+                            setTodos([...todos, todo]))}
             >
-              Add Todo <AddIcon />
-            </Button>
-            <Button type='submit' variant='contained' color='primary'>
-              Save
+                Add Todo < AddIcon />
             </Button>
           </CardActions>
         </form>

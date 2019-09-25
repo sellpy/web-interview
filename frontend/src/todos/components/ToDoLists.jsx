@@ -8,32 +8,25 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ReceiptIcon from '@material-ui/icons/Receipt'
 import Typography from '@material-ui/core/Typography'
 import { ToDoListForm } from './ToDoListForm'
-
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+import { Checkbox } from '@material-ui/core';
+import axios from 'axios';
 
 const getPersonalTodos = () => {
-  return sleep(1000).then(() => Promise.resolve({
-    '0000000001': {
-      id: '0000000001',
-      title: 'First List',
-      todos: ['First todo of first list!']
-    },
-    '0000000002': {
-      id: '0000000002',
-      title: 'Second List',
-      todos: ['First todo of second list!']
-    }
-  }))
+  return axios.get('http://localhost:3001/todo-list')
+  	.then(res => res.data);
 }
 
 export const ToDoLists = ({ style }) => {
   const [toDoLists, setToDoLists] = useState({})
   const [activeList, setActiveList] = useState()
-
-  useEffect(() => {
+  const getTodos = () => {
     getPersonalTodos()
       .then(setToDoLists)
+  }
+  useEffect(() => {
+    getTodos();
   }, [])
+
 
   if (!Object.keys(toDoLists).length) return null
   return <Fragment>
@@ -55,6 +48,9 @@ export const ToDoLists = ({ style }) => {
               <ReceiptIcon />
             </ListItemIcon>
             <ListItemText primary={toDoLists[key].title} />
+            <Checkbox
+              checked={toDoLists[key].todos.every(todo => todo.done)}
+            ></Checkbox>
           </ListItem>)}
         </List>
       </CardContent>
@@ -62,13 +58,7 @@ export const ToDoLists = ({ style }) => {
     {toDoLists[activeList] && <ToDoListForm
       key={activeList} // use key to make React recreate component to reset internal state
       toDoList={toDoLists[activeList]}
-      saveToDoList={(id, { todos }) => {
-        const listToUpdate = toDoLists[id]
-        setToDoLists({
-          ...toDoLists,
-          [id]: { ...listToUpdate, todos }
-        })
-      }}
+      onUpdate={() => getTodos()}
     />}
   </Fragment>
 }
