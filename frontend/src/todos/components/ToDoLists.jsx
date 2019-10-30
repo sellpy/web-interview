@@ -40,7 +40,6 @@ export const ToDoLists = ({ style }) => {
     <Card style={style}>
       <CardContent>
         <Typography
-          variant='headline'
           component='h2'
         >
           My ToDo Lists

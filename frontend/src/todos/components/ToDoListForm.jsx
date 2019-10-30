@@ -42,13 +42,13 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
   return (
     <Card className={classes.card}>
       <CardContent>
-        <Typography variant='headline' component='h2'>
+        <Typography component='h2'>
           {toDoList.title}
         </Typography>
         <form onSubmit={handleSubmit} className={classes.form}>
           {todos.map((name, index) => (
             <div key={index} className={classes.todoLine}>
-              <Typography className={classes.standardSpace} variant='title'>
+              <Typography className={classes.standardSpace} variant='h6'>
                 {index + 1}
               </Typography>
               <TextField

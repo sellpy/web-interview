@@ -24,6 +24,11 @@ NodeJS - https://nodejs.org/en/download/
 
  A browsertab will automatically open and load the app.
 
+### Development set-up
+If you don't have a favorite editor we highly recommend [VSCode](https://code.visualstudio.com). We've also had some ESLint rules set up which will help you catch bugs etc. If you're using VSCode, install the regular [ESLint plugin](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) and you should be good to go!
+
+You can open the root folder in one workspace, or `/frontend` and `/backend` in seperate workspaces - both should work fine.
+
 ## Assignment
 
 Your assignment is to improve this todo list application. At the moment the application is simple and can only create and remove todos.
