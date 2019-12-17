@@ -42,7 +42,7 @@ Persist todos on the server. Persisting in a database is not required. (Simple j
 ### Additional tasks
 - Make it possible to indicate that a todo is completed.
 - Indicate that a todolist is completed if all todo items within are completed.
-- Don't require users to press save when an item is added or deleted from the todolist. (Autosave functionality)
+- Don't require users to press save when an item is added/edited in the todolist. (Autosave functionality)
 - Add a date for completion to todo items. Indicate how much time is remaining or overdue.
 
 ## Submission
