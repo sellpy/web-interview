@@ -30,14 +30,12 @@ If you don't have a favorite editor we highly recommend [VSCode](https://code.vi
 You can open the root folder in one workspace, or `/frontend` and `/backend` in seperate workspaces - both should work fine.
 
 ## Assignment
-
 Your assignment is to improve this todo list application. At the moment the application is simple and can only create and remove todos.
 As is, nothing is persisted in the server. As a result all state is cleared when refreshing the page!
 Below follows one main task and 4 additional tasks. Your assignment is to complete the main task together with at least 2 out of 4 of the additional tasks.
 
 ### Main Task
-
-Persist todos on the server. Persisting in a database is not required. (Simple js structures on the server is fine). If a database is desired an in memory database is provided. (lokijs)
+Persist todos on the server. Persisting in a database is not required. (Simple js structures on the server is fine).
 
 ### Additional tasks
 - Make it possible to indicate that a todo is completed.
