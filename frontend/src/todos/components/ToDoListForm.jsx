@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -31,6 +31,7 @@ const useStyles = makeStyles({
 });
 
 export const ToDoListForm = ({ toDoList, saveToDoList }) => {
+  console.log('ToDoListForm -> toDoList', toDoList);
   const classes = useStyles();
   const [todos, setTodos] = useState(toDoList.todos);
 
@@ -44,18 +45,24 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
     saveToDoList(toDoList.id, { todos });
   };
 
+  useEffect(
+    saveToDoList => {
+      console.log(todos);
+      console.log(toDoList);
+      if (todos.length !== toDoList.todos.length) {
+        saveToDoList(toDoList.id, { todos });
+      }
+    },
+    [todos, toDoList]
+  );
+
   return (
-    <Card className={classes.card}>
+    <Card className={classes.card} onBlur={handleBlur}>
       <CardContent>
         <Typography component='h2'>{toDoList.title}</Typography>
         <form onSubmit={handleSubmit} className={classes.form}>
           {todos.map((name, index) => (
-            <div
-              key={index}
-              className={classes.todoLine}
-              tabIndex={index}
-              onBlur={handleBlur}
-            >
+            <div key={index} className={classes.todoLine} tabIndex={index}>
               <Typography className={classes.standardSpace} variant='h6'>
                 {index + 1}
               </Typography>
