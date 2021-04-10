@@ -66,9 +66,9 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
                 className={classes.textField}
               />
               <span style={{ padding: "5px", fontWeight: "bolder" }}>
-                Date:
+              Created:
               </span>
-              {toDoList.date}
+              {toDoList.created}
               <span style={{ paddingLeft: "15px", fontWeight: "bolder" }}>
                 Compeleted:
               </span>{" "}
