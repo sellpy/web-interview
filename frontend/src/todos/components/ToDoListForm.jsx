@@ -68,7 +68,6 @@ export const ToDoListForm = ({ toDoList, saveToDoList, deleteItem }) => {
               <span style={{ padding: "5px", fontWeight: "bolder" }}>
                 Created:
               </span>
-              {/* {toDoList.created} {Moment(toDoList.created).format("YYYY-MM-DD hh:mm:ss")} */}
               {Moment(toDoList.created).format("YYYY-MM-DD")}
               <span style={{ paddingLeft: "15px", fontWeight: "bolder" }}>
                 Compeleted:
@@ -77,6 +76,7 @@ export const ToDoListForm = ({ toDoList, saveToDoList, deleteItem }) => {
               <Button
                 size="small"
                 color="secondary"
+                padding="50px"
                 className={classes.standardSpace}
                 onClick={() => {
                   deleteItem(toDoList._id);

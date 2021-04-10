@@ -10,6 +10,28 @@ import Typography from "@material-ui/core/Typography";
 import { ToDoListForm } from "./ToDoListForm";
 import MockApi from "../../MockApi";
 import ApiConfig from "../../ApiConfig";
+import {Button, Checkbox } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import DeleteIcon from "@material-ui/icons/Delete";
+import Moment from "moment";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: "100%",
+    // maxWidth: 360,
+    marginRight: "50px",
+    backgroundColor: theme.palette.background.paper,
+  },
+  paper: {
+    padding: theme.spacing(3),
+    textAlign: "left",
+    color: theme.palette.text.secondary,
+  },
+  standardSpace: {
+    margin: "0px",
+  },
+}));
+
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const getPersonalTodos = () => {
@@ -20,6 +42,7 @@ export const ToDoLists = ({ style }) => {
   const [toDoLists, setToDoLists] = useState({});
   const [activeList, setActiveList] = useState();
   const [items, setItems] = useState({});
+  const classes = useStyles();
 
   useEffect(() => {
     const fetchGetAllItems = async () => {
@@ -33,7 +56,10 @@ export const ToDoLists = ({ style }) => {
   useEffect(() => {
     getPersonalTodos().then(setToDoLists);
   }, []);
-
+  const deleteItem = (id) => {
+    console.log(id);
+    ApiConfig.deleteItem(id);
+  };
   if (!Object.keys(toDoLists).length) return null;
   return (
     <Fragment>
@@ -42,12 +68,35 @@ export const ToDoLists = ({ style }) => {
           <Typography component="h2">My ToDo Lists</Typography>
           <List>
             {Object.keys(items).map((key) => (
-              <ListItem key={key} button onClick={() => setActiveList(key)}>
-                <ListItemIcon>
-                  <ReceiptIcon />
-                </ListItemIcon>
-                <ListItemText primary={items[key].title} />
-              </ListItem>
+              <div className={classes.root}>
+                <ListItem key={key} button onClick={() => setActiveList(key)}>
+                  <ListItemIcon>
+                    <ReceiptIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={items[key].title} />
+
+                  <ListItemText
+                    primary={`  ${Moment(items[key].created).format(
+                      "YYYY-MM-DD"
+                    )}`}
+                  />
+
+                  <ListItemIcon>
+                    <Checkbox edge="start" checked={true} disableRipple />
+                  </ListItemIcon>
+
+                  <Button
+                    size="small"
+                    color="secondary"
+                    className={classes.standardSpace}
+                    onClick={() => {
+                      deleteItem(items[key]._id);
+                    }}
+                  >
+                    <DeleteIcon />
+                  </Button>
+                </ListItem>
+              </div>
             ))}
           </List>
         </CardContent>
@@ -56,6 +105,7 @@ export const ToDoLists = ({ style }) => {
         <ToDoListForm
           key={activeList} // use key to make React recreate component to reset internal state
           toDoList={items[activeList]}
+          deleteItem={deleteItem}
           saveToDoList={(id, { todos }) => {
             const listToUpdate = items[id];
             setItems({
