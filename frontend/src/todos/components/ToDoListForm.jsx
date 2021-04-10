@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add";
-
+import Moment from 'moment';
 const useStyles = makeStyles({
   card: {
     margin: "1rem",
@@ -68,7 +68,9 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
               <span style={{ padding: "5px", fontWeight: "bolder" }}>
                 Created:
               </span>
-              {toDoList.created}
+              {/* {toDoList.created} {Moment(toDoList.created).format("YYYY-MM-DD hh:mm:ss")} */}
+              {Moment(toDoList.created).format("YYYY-MM-DD")}
+
               <span style={{ paddingLeft: "15px", fontWeight: "bolder" }}>
                 Compeleted:
               </span>{" "}
