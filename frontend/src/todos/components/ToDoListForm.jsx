@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add";
-import Moment from 'moment';
+import Moment from "moment";
 const useStyles = makeStyles({
   card: {
     margin: "1rem",
@@ -33,7 +33,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const ToDoListForm = ({ toDoList, saveToDoList }) => {
+export const ToDoListForm = ({ toDoList, saveToDoList, deleteItem }) => {
   const classes = useStyles();
   const [todos, setTodos] = useState(toDoList.todos);
 
@@ -47,14 +47,14 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
       <CardContent>
         <Typography component="h2">{toDoList.title}</Typography>
         <form onSubmit={handleSubmit} className={classes.form}>
-          {todos.map((name, index) => (
+          {todos.map(({ taskTitle }, index) => (
             <div key={index} className={classes.todoLine}>
               <Typography className={classes.standardSpace} variant="h6">
                 {index + 1}
               </Typography>
               <TextField
                 label="What to do?"
-                value={name}
+                value={taskTitle}
                 onChange={(event) => {
                   setTodos([
                     // immutable update
@@ -70,7 +70,6 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
               </span>
               {/* {toDoList.created} {Moment(toDoList.created).format("YYYY-MM-DD hh:mm:ss")} */}
               {Moment(toDoList.created).format("YYYY-MM-DD")}
-
               <span style={{ paddingLeft: "15px", fontWeight: "bolder" }}>
                 Compeleted:
               </span>{" "}
@@ -80,11 +79,12 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
                 color="secondary"
                 className={classes.standardSpace}
                 onClick={() => {
-                  setTodos([
-                    // immutable delete
-                    ...todos.slice(0, index),
-                    ...todos.slice(index + 1),
-                  ]);
+                  deleteItem(toDoList._id);
+                  //   setTodos([
+                  //     // immutable delete
+                  //     ...todos.slice(0, index),
+                  //     ...todos.slice(index + 1),
+                  //   ]);
                 }}
               >
                 <DeleteIcon />
