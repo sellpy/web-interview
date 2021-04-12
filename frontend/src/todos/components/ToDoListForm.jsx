@@ -33,13 +33,64 @@ const useStyles = makeStyles({
   },
 });
 
-export const ToDoListForm = ({ toDoList, saveToDoList, deleteItem }) => {
+export const ToDoListForm = ({
+  toDoList,
+  saveToDoList,
+  deleteItem,
+  updateItem,
+}) => {
   const classes = useStyles();
   const [todos, setTodos] = useState(toDoList.todos);
+  const [check, setCheck] = useState(false);
+  const [taskTitle1, setTaskTitle1] = useState("");
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    saveToDoList(toDoList.id, { todos });
+    console.log("form submitted");
+  };
+
+  const handleCheck = (id, e, t) => {
+    console.log(id);
+    // update completed
+    const updateTodo = {
+      taskTitle: t.taskTitle,
+      completed: !t.completed,
+    };
+    const modifiedList = todos.map((item) =>
+      item._id === t._id ? updateTodo : item
+    );
+    setTodos(modifiedList);
+    updateItem(e, manipulateItem(id, modifiedList));
+  };
+
+  const manipulateItem = (id, newTodos) => {
+    return {
+      _id: id,
+      title: toDoList.title,
+      compeleted: toDoList.compeleted,
+      todos: newTodos,
+    };
+  };
+  const addTodo = (e, id, todoItem) => {
+    const updateTodo = {
+      taskTitle: taskTitle1,
+      completed: check,
+    };
+    todoItem.pop();
+    todoItem.push(updateTodo);
+
+    setTodos([...todos, todoItem]);
+    updateItem(e, manipulateItem(id, todoItem));
+  };
+  const handleInput = (event) => {
+    setTaskTitle1(event.target.value);
+  };
+
+  const deleteTodo = (id, e, todo) => {
+    console.log(todo._id);
+    const cleanList = todos.filter((item) => item._id !== todo._id);
+    setTodos(cleanList);
+    updateItem(e, manipulateItem(id, cleanList));
   };
 
   return (
@@ -47,7 +98,7 @@ export const ToDoListForm = ({ toDoList, saveToDoList, deleteItem }) => {
       <CardContent>
         <Typography component="h2">{toDoList.title}</Typography>
         <form onSubmit={handleSubmit} className={classes.form}>
-          {todos.map(({ taskTitle }, index) => (
+          {todos.map(({ taskTitle, completed, created }, index) => (
             <div key={index} className={classes.todoLine}>
               <Typography className={classes.standardSpace} variant="h6">
                 {index + 1}
@@ -55,36 +106,27 @@ export const ToDoListForm = ({ toDoList, saveToDoList, deleteItem }) => {
               <TextField
                 label="What to do?"
                 value={taskTitle}
-                onChange={(event) => {
-                  setTodos([
-                    // immutable update
-                    ...todos.slice(0, index),
-                    event.target.value,
-                    ...todos.slice(index + 1),
-                  ]);
-                }}
+                onChange={(event) => handleInput(event)}
                 className={classes.textField}
               />
               <span style={{ padding: "5px", fontWeight: "bolder" }}>
                 Created:
               </span>
-              {Moment(toDoList.created).format("YYYY-MM-DD")}
+              {Moment(created).format("YYYY-MM-DD")}
               <span style={{ paddingLeft: "15px", fontWeight: "bolder" }}>
                 Compeleted:
               </span>{" "}
-              <Checkbox checked={toDoList.completed}></Checkbox>
+              <Checkbox
+                checked={completed}
+                onClick={(e) => handleCheck(toDoList._id, e, todos[index])}
+              ></Checkbox>
               <Button
                 size="small"
                 color="secondary"
                 padding="50px"
                 className={classes.standardSpace}
-                onClick={() => {
-                  deleteItem(toDoList._id);
-                  //   setTodos([
-                  //     // immutable delete
-                  //     ...todos.slice(0, index),
-                  //     ...todos.slice(index + 1),
-                  //   ]);
+                onClick={(e) => {
+                  deleteTodo(toDoList._id, e, todos[index]);
                 }}
               >
                 <DeleteIcon />
@@ -96,12 +138,17 @@ export const ToDoListForm = ({ toDoList, saveToDoList, deleteItem }) => {
               type="button"
               color="primary"
               onClick={() => {
-                setTodos([...todos, ""]);
+                setTodos([...todos, { id: "red" }]);
               }}
             >
               Add Todo <AddIcon />
             </Button>
-            <Button type="submit" variant="contained" color="primary">
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              onClick={(e) => addTodo(e, toDoList._id, todos)}
+            >
               Save
             </Button>
           </CardActions>
