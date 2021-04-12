@@ -67,6 +67,7 @@ app.delete("/:id", (req, res) => {
 });
 /********************************************************** */
 app.put("/:id", (req, res) => {
+
   const { id } = req.params;
   const todo = {
     title: req.body.title,
@@ -75,7 +76,7 @@ app.put("/:id", (req, res) => {
   };
   repository
     .updateById(id, todo)
-    .then(res.status(200).json([]))
+    .then(res.status(200).json(todo))
     .catch((error) => console.log(error));
 });
 
