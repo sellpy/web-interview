@@ -11,4 +11,10 @@ async function deleteItem(id) {
   return message;
 }
 
-export default {getAllItems,deleteItem };
+async function updateItem(id, payload) {
+  const { data: newItem } = await axios.put(`${API_URL}${id}`, payload);
+  return newItem;
+}
+
+
+export default {getAllItems,deleteItem,updateItem };
