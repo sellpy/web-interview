@@ -10,11 +10,12 @@ import Typography from "@material-ui/core/Typography";
 import { ToDoListForm } from "./ToDoListForm";
 import MockApi from "../../MockApi";
 import ApiConfig from "../../ApiConfig";
-import {Button, Checkbox } from "@material-ui/core";
+import { Button, Checkbox } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Moment from "moment";
 
+/********************************************************** */
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
@@ -32,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+/********************************************************** */
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const getPersonalTodos = () => {
@@ -44,10 +46,10 @@ export const ToDoLists = ({ style }) => {
   const [items, setItems] = useState({});
   const classes = useStyles();
 
+  /********************************************************** */
   useEffect(() => {
     const fetchGetAllItems = async () => {
       const items = await ApiConfig.getAllItems();
-      console.log(items);
       setItems(items);
     };
     fetchGetAllItems();
@@ -56,10 +58,30 @@ export const ToDoLists = ({ style }) => {
   useEffect(() => {
     getPersonalTodos().then(setToDoLists);
   }, []);
-  const deleteItem = (id) => {
-    console.log(id);
-    ApiConfig.deleteItem(id);
+
+  /********************************************************** */
+  const deleteItem = (item) => {
+    console.log(item._id);
+    const cleanItemList = items.filter((x) => x._id !== item._id);
+    ApiConfig.deleteItem(item._id);
+
+    setItems(cleanItemList);
   };
+
+  /********************************************************** */
+  const updateItem = async (e, newItem) => {
+    let payload = newItem;
+
+    e.stopPropagation();
+    const updatedTodo = await ApiConfig.updateItem(payload._id, payload);
+
+    setItems(
+      items.map((item) => (item._id === payload._id ? updatedTodo : item))
+    );
+    console.log(items);
+  };
+
+  /********************************************************** */
   if (!Object.keys(toDoLists).length) return null;
   return (
     <Fragment>
@@ -68,7 +90,7 @@ export const ToDoLists = ({ style }) => {
           <Typography component="h2">My ToDo Lists</Typography>
           <List>
             {Object.keys(items).map((key) => (
-              <div className={classes.root}>
+              <div key={key} className={classes.root}>
                 <ListItem key={key} button onClick={() => setActiveList(key)}>
                   <ListItemIcon>
                     <ReceiptIcon />
@@ -90,7 +112,7 @@ export const ToDoLists = ({ style }) => {
                     color="secondary"
                     className={classes.standardSpace}
                     onClick={() => {
-                      deleteItem(items[key]._id);
+                      deleteItem(items[key]);
                     }}
                   >
                     <DeleteIcon />
@@ -103,16 +125,10 @@ export const ToDoLists = ({ style }) => {
       </Card>
       {items[activeList] && (
         <ToDoListForm
-          key={activeList} // use key to make React recreate component to reset internal state
+          key={activeList}
           toDoList={items[activeList]}
           deleteItem={deleteItem}
-          saveToDoList={(id, { todos }) => {
-            const listToUpdate = items[id];
-            setItems({
-              ...items,
-              [id]: { ...listToUpdate, todos },
-            });
-          }}
+          updateItem={updateItem}
         />
       )}
     </Fragment>
