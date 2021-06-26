@@ -1,0 +1,30 @@
+{
+  "0000000001": {
+    "id": "0000000001",
+    "title": "Be a good person",
+    "toDos": [{
+        "text": "Call mom",
+        "isCompleted": false
+      },
+      {
+        "text": "Eat vegetables",
+        "isCompleted": false
+      },
+      {
+        "text": "Use Sellpy",
+        "isCompleted": false
+      }]
+  },
+  "0000000002": {
+    "id": "0000000002",
+    "title": "Have fun staying poor",
+    "toDos": [{
+        "text": "Refuse to buy Bitcoin",
+        "isCompleted": false
+      },
+      {
+        "text": "Sell the dip",
+        "isCompleted": false
+      }]
+  }
+}
