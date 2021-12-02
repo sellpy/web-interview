@@ -27,25 +27,25 @@ const getPersonalTodos = () => {
 }
 
 export const TodoLists = ({ style }) => {
-  const [toDoLists, setToDoLists] = useState({})
+  const [todoLists, setTodoLists] = useState({})
   const [activeList, setActiveList] = useState()
 
   useEffect(() => {
     getPersonalTodos()
-      .then(setToDoLists)
+      .then(setTodoLists)
   }, [])
 
-  if (!Object.keys(toDoLists).length) return null
+  if (!Object.keys(todoLists).length) return null
   return <Fragment>
     <Card style={style}>
       <CardContent>
         <Typography
           component='h2'
         >
-          My ToDo Lists
+          My Todo Lists
         </Typography>
         <List>
-          {Object.keys(toDoLists).map((key) => <ListItem
+          {Object.keys(todoLists).map((key) => <ListItem
             key={key}
             button
             onClick={() => setActiveList(key)}
@@ -53,18 +53,18 @@ export const TodoLists = ({ style }) => {
             <ListItemIcon>
               <ReceiptIcon />
             </ListItemIcon>
-            <ListItemText primary={toDoLists[key].title} />
+            <ListItemText primary={todoLists[key].title} />
           </ListItem>)}
         </List>
       </CardContent>
     </Card>
-    {toDoLists[activeList] && <TodoListForm
+    {todoLists[activeList] && <TodoListForm
       key={activeList} // use key to make React recreate component to reset internal state
-      toDoList={toDoLists[activeList]}
-      saveToDoList={(id, { todos }) => {
-        const listToUpdate = toDoLists[id]
-        setToDoLists({
-          ...toDoLists,
+      todoList={todoLists[activeList]}
+      saveTodoList={(id, { todos }) => {
+        const listToUpdate = todoLists[id]
+        setTodoLists({
+          ...todoLists,
           [id]: { ...listToUpdate, todos }
         })
       }}

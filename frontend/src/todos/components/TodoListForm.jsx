@@ -25,20 +25,20 @@ const useStyles = makeStyles({
   }
 })
 
-export const TodoListForm = ({ toDoList, saveToDoList }) => {
+export const TodoListForm = ({ todoList, saveTodoList }) => {
   const classes = useStyles()
-  const [todos, setTodos] = useState(toDoList.todos)
+  const [todos, setTodos] = useState(todoList.todos)
 
   const handleSubmit = event => {
     event.preventDefault()
-    saveToDoList(toDoList.id, { todos })
+    saveTodoList(todoList.id, { todos })
   }
 
   return (
     <Card className={classes.card}>
       <CardContent>
         <Typography component='h2'>
-          {toDoList.title}
+          {todoList.title}
         </Typography>
         <form onSubmit={handleSubmit} className={classes.form}>
           {todos.map((name, index) => (
