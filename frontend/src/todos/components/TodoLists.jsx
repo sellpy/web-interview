@@ -7,7 +7,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ReceiptIcon from '@material-ui/icons/Receipt'
 import Typography from '@material-ui/core/Typography'
-import { ToDoListForm } from './TodoListForm'
+import { TodoListForm } from './TodoListForm'
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -26,7 +26,7 @@ const getPersonalTodos = () => {
   }))
 }
 
-export const ToDoLists = ({ style }) => {
+export const TodoLists = ({ style }) => {
   const [toDoLists, setToDoLists] = useState({})
   const [activeList, setActiveList] = useState()
 
@@ -58,7 +58,7 @@ export const ToDoLists = ({ style }) => {
         </List>
       </CardContent>
     </Card>
-    {toDoLists[activeList] && <ToDoListForm
+    {toDoLists[activeList] && <TodoListForm
       key={activeList} // use key to make React recreate component to reset internal state
       toDoList={toDoLists[activeList]}
       saveToDoList={(id, { todos }) => {

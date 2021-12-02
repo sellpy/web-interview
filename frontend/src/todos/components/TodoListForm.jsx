@@ -25,7 +25,7 @@ const useStyles = makeStyles({
   }
 })
 
-export const ToDoListForm = ({ toDoList, saveToDoList }) => {
+export const TodoListForm = ({ toDoList, saveToDoList }) => {
   const classes = useStyles()
   const [todos, setTodos] = useState(toDoList.todos)
 
