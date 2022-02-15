@@ -12,7 +12,7 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
   }
 
   return (
-    <Card sx={{margin: '1rem'}}>
+    <Card sx={{margin: '0 1rem'}}>
       <CardContent>
         <Typography component='h2'>
           {todoList.title}
