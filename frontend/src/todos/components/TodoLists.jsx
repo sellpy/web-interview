@@ -1,12 +1,6 @@
 import React, { Fragment, useState, useEffect } from 'react'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemText from '@material-ui/core/ListItemText'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ReceiptIcon from '@material-ui/icons/Receipt'
-import Typography from '@material-ui/core/Typography'
+import { Card, CardContent, List, ListItem, ListItemText, ListItemIcon, Typography } from '@mui/material'
+import ReceiptIcon from '@mui/icons-material/Receipt'
 import { TodoListForm } from './TodoListForm'
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
