@@ -5,8 +5,8 @@ import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
 import ListItemIcon from '@mui/material/ListItemIcon'
-import ReceiptIcon from '@material-ui/icons/Receipt'
 import Typography from '@mui/material/Typography'
+import ReceiptIcon from '@mui/icons-material/Receipt'
 import { TodoListForm } from './TodoListForm'
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
