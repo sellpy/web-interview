@@ -3,33 +3,21 @@ import { Card, CardContent, List, ListItem, ListItemText, ListItemIcon, Typograp
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { TodoListForm } from './TodoListForm'
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
-
 const getPersonalTodos = () => {
-  return sleep(1000).then(() => Promise.resolve({
-    '0000000001': {
-      id: '0000000001',
-      title: 'First List',
-      todos: ['First todo of first list!']
-    },
-    '0000000002': {
-      id: '0000000002',
-      title: 'Second List',
-      todos: ['First todo of second list!']
-    }
-  }))
+  return fetch('http://localhost:3001/todos').then(res => res.json())
 }
 
 export const TodoLists = ({ style }) => {
   const [todoLists, setTodoLists] = useState({})
-  const [activeList, setActiveList] = useState()
+  const [activeListId, setActiveListId] = useState()
 
   useEffect(() => {
     getPersonalTodos()
       .then(setTodoLists)
   }, [])
 
-  if (!Object.keys(todoLists).length) return null
+  if (!todoLists.length) return null
+
   return <Fragment>
     <Card style={style}>
       <CardContent>
@@ -39,27 +27,42 @@ export const TodoLists = ({ style }) => {
           My Todo Lists
         </Typography>
         <List>
-          {Object.keys(todoLists).map((key) => <ListItem
-            key={key}
+          {todoLists.map((todoList) => <ListItem
+            key={todoList.id}
             button
-            onClick={() => setActiveList(key)}
+            onClick={() => setActiveListId(todoList.id)}
           >
             <ListItemIcon>
               <ReceiptIcon />
             </ListItemIcon>
-            <ListItemText primary={todoLists[key].title} />
+            <ListItemText primary={todoList.title} />
           </ListItem>)}
         </List>
       </CardContent>
     </Card>
-    {todoLists[activeList] && <TodoListForm
-      key={activeList} // use key to make React recreate component to reset internal state
-      todoList={todoLists[activeList]}
+    {todoLists.find(todoList => todoList.id === activeListId) && <TodoListForm
+      key={activeListId} // use key to make React recreate component to reset internal state
+      todoList={todoLists.find(todoList => todoList.id === activeListId)}
       saveTodoList={(id, { todos }) => {
-        const listToUpdate = todoLists[id]
-        setTodoLists({
-          ...todoLists,
-          [id]: { ...listToUpdate, todos }
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        fetch(`http://localhost:3001/todos/${id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({todos, title: todoLists.find(todoList => todoList.id === activeListId).title}),
+          headers
+        }).then(() => {
+          setTodoLists(todoLists => {
+            return todoLists.map(todoList => {
+              if (todoList.id !== id) {
+                return todoList;
+              }
+
+              return {
+                ...todoList,
+                todos
+              };
+            })
+          })
         })
       }}
     />}
