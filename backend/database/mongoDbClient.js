@@ -1,5 +1,9 @@
+const config = require('config');
 const { MongoClient } = require('mongodb');
-const client = new MongoClient('mongodb://localhost:27017', {
+
+const mongoDbConfig = config.get('BackendApp.mongoDB');
+
+const client = new MongoClient(mongoDbConfig.database_address, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -13,7 +17,7 @@ module.exports = {
         return callback(err);
       }
 
-      dbConnection = db.db('todos-app');
+      dbConnection = db.db(mongoDbConfig.database_name);
       console.log('Successfully connected to MongoDB.');
 
       return callback();
