@@ -10,6 +10,8 @@ const client = new MongoClient(mongoDbConfig.database_address, {
 
 let dbConnection;
 
+let closeConnection;
+
 module.exports = {
   connectToServer: function (callback) {
     client.connect(function (err, db) {
@@ -18,6 +20,7 @@ module.exports = {
       }
 
       dbConnection = db.db(mongoDbConfig.database_name);
+      closeConnection = () => db.close();
       console.log('Successfully connected to MongoDB.');
 
       return callback();
@@ -27,4 +30,9 @@ module.exports = {
   getDb: function () {
     return dbConnection;
   },
+
+  closeConnection: async function() {
+    console.log('closing MongoDB connection.');
+    await closeConnection();
+  }
 };
