@@ -1,38 +1,31 @@
 const express = require('express');
 const { checkSchema, validationResult } = require('express-validator');
-const ULID = require('ulid');
+const ToDosService = require('../services/todosService');
+
+const ToDosServiceInstance = new ToDosService();
+
 
 const router = express.Router();
 
-// get MongoDB driver connection
-const mongoDbClient = require('../database/mongoDbClient');
-
 // Get ToDos Lists
 router.route('/todos').get(async function (req, res) {
-  const dbConnect = mongoDbClient.getDb();
-
-  dbConnect
-    .collection('todos')
-    .find({})
-    .limit(50)
-    .toArray(function (err, result) {
-      if (err) {
-        res.status(400).send('Error fetching todos');
-      } else {
-        res.json(result);
-      }
-    });
+  ToDosServiceInstance.getToDosLists().then(todoLists => {
+    res.json(todoLists);
+  }).catch(() => {
+    // ToDo: Handle error
+    res.status(500).send('Error fetching ToDos lists');
+  });
 });
 
 // Create ToDos Lists
 router.route('/todos').post(checkSchema({
     title: {
       notEmpty: true,
-      errorMessage: "Todos list title cannot be empty"
+      errorMessage: "ToDos list title cannot be empty"
     },
     todos: {
       notEmpty: true,
-      errorMessage: "At least one todo is necessary"
+      errorMessage: "At least one ToDo is necessary"
     },
   }), async function (req, res) {
 
@@ -41,26 +34,19 @@ router.route('/todos').post(checkSchema({
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const dbConnect = mongoDbClient.getDb();
-
-  const newToDo = {...req.body, id: ULID.ulid()};
-
-  dbConnect
-    .collection('todos')
-    .insertOne(newToDo, function (err, result) {
-      if (err) {
-        res.status(400).send('Error creating todos');
-      } else {
-        res.json(result);
-      }
-    });
+  ToDosServiceInstance.createToDosList(req.body.title, req.body.todos).then(() => {
+    res.status(201).send('ToDos list created successfully');
+  }).catch(() => {
+    // ToDo: Handle error
+    res.status(400).send('Error creating ToDos list');
+  });
 });
 
 // Patch ToDos List
 router.route('/todos/:todoListId').patch(checkSchema({
   title: {
     notEmpty: true,
-    errorMessage: "Todos list title cannot be empty"
+    errorMessage: "ToDos list title cannot be empty"
   },
   todos: {
     notEmpty: true,
@@ -73,21 +59,12 @@ router.route('/todos/:todoListId').patch(checkSchema({
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const dbConnect = mongoDbClient.getDb();
-
-  const updateQuery = {"id": req.params.todoListId};
-
-  const updatedToDosList = {"$set": {"title": req.body.title, "todos": req.body.todos}};
-
-  dbConnect
-    .collection('todos')
-    .updateOne(updateQuery, updatedToDosList, function (err, result) {
-      if (err) {
-        res.status(400).send('Error patching todo');
-      } else {
-        res.json(result);
-      }
-    });
+  ToDosServiceInstance.updateToDosList(req.params.todoListId, req.body.title, req.body.todos).then(() => {
+    res.status(200).send('ToDos list updated successfully');
+  }).catch(() => {
+    // ToDo: Handle error
+    res.status(400).send('Error updating ToDos list');
+  });
 });
 
 module.exports = router;
