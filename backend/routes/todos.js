@@ -8,12 +8,11 @@ const ToDosServiceInstance = new ToDosService();
 const router = express.Router();
 
 // Get ToDos Lists
-router.route('/todos').get(async function (req, res) {
+router.route('/todos').get(async function (req, res, next) {
   ToDosServiceInstance.getToDosLists().then(todoLists => {
     res.json(todoLists);
-  }).catch(() => {
-    // ToDo: Handle error
-    res.status(500).send('Error fetching ToDos lists');
+  }).catch(err => {
+    next(err);
   });
 });
 
@@ -27,7 +26,7 @@ router.route('/todos').post(checkSchema({
       notEmpty: true,
       errorMessage: "At least one ToDo is necessary"
     },
-  }), async function (req, res) {
+  }), async function (req, res, next) {
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -36,9 +35,8 @@ router.route('/todos').post(checkSchema({
 
   ToDosServiceInstance.createToDosList(req.body.title, req.body.todos).then(() => {
     res.status(201).send('ToDos list created successfully');
-  }).catch(() => {
-    // ToDo: Handle error
-    res.status(400).send('Error creating ToDos list');
+  }).catch(err => {
+    next(err);
   });
 });
 
@@ -52,7 +50,7 @@ router.route('/todos/:todoListId').patch(checkSchema({
     notEmpty: true,
     errorMessage: "At least one todo is necessary"
   },
-}), async function (req, res) {
+}), async function (req, res, next) {
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -61,9 +59,8 @@ router.route('/todos/:todoListId').patch(checkSchema({
 
   ToDosServiceInstance.updateToDosList(req.params.todoListId, req.body.title, req.body.todos).then(() => {
     res.status(200).send('ToDos list updated successfully');
-  }).catch(() => {
-    // ToDo: Handle error
-    res.status(400).send('Error updating ToDos list');
+  }).catch(err => {
+    next(err);
   });
 });
 
