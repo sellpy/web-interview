@@ -33,8 +33,8 @@ router.route('/todos').post(checkSchema({
     return res.status(400).json({ errors: errors.array() });
   }
 
-  ToDosServiceInstance.createToDosList(req.body.title, req.body.todos).then(() => {
-    res.status(201).send('ToDos list created successfully');
+  ToDosServiceInstance.createToDosList(req.body.title, req.body.todos).then((createdTodosList) => {
+    res.status(201).json(createdTodosList);
   }).catch(err => {
     next(err);
   });
