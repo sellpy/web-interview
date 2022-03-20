@@ -1,0 +1,7 @@
+{
+  "BackendApp": {
+    "mongoDB": {
+      "database_name": "todos-app-test"
+    }
+  }
+}

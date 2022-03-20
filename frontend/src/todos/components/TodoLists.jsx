@@ -1,35 +1,42 @@
 import React, { Fragment, useState, useEffect } from 'react'
-import { Card, CardContent, List, ListItem, ListItemText, ListItemIcon, Typography } from '@mui/material'
+import {
+  Card,
+  CardContent,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Typography,
+  Snackbar,
+  Alert
+} from '@mui/material'
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { TodoListForm } from './TodoListForm'
-
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
-
-const getPersonalTodos = () => {
-  return sleep(1000).then(() => Promise.resolve({
-    '0000000001': {
-      id: '0000000001',
-      title: 'First List',
-      todos: ['First todo of first list!']
-    },
-    '0000000002': {
-      id: '0000000002',
-      title: 'Second List',
-      todos: ['First todo of second list!']
-    }
-  }))
-}
+import {getPersonalTodos, patchTodosList} from "../../utils/fetchUtils";
 
 export const TodoLists = ({ style }) => {
-  const [todoLists, setTodoLists] = useState({})
-  const [activeList, setActiveList] = useState()
+  const [todoLists, setTodoLists] = useState([]);
+  const [activeListId, setActiveListId] = useState();
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastSeverity, setToastSeverity] = useState('info');
 
   useEffect(() => {
     getPersonalTodos()
       .then(setTodoLists)
-  }, [])
+      .catch(() => {
+        setToastSeverity('error');
+        setToastMessage('An error occurred when fetching the todos');
+        setShowToast(true);
+      })
+  }, [setToastMessage, setToastSeverity, setShowToast]);
 
-  if (!Object.keys(todoLists).length) return null
+  if (!todoLists.length) return null
+
+  const handleCloseToast = () => {
+    setShowToast(false);
+  };
+
   return <Fragment>
     <Card style={style}>
       <CardContent>
@@ -39,29 +46,53 @@ export const TodoLists = ({ style }) => {
           My Todo Lists
         </Typography>
         <List>
-          {Object.keys(todoLists).map((key) => <ListItem
-            key={key}
+          {todoLists.map((todoList) => <ListItem
+            key={todoList.id}
             button
-            onClick={() => setActiveList(key)}
+            onClick={() => setActiveListId(todoList.id)}
           >
             <ListItemIcon>
               <ReceiptIcon />
             </ListItemIcon>
-            <ListItemText primary={todoLists[key].title} />
+            <ListItemText primary={todoList.title} />
           </ListItem>)}
         </List>
       </CardContent>
     </Card>
-    {todoLists[activeList] && <TodoListForm
-      key={activeList} // use key to make React recreate component to reset internal state
-      todoList={todoLists[activeList]}
-      saveTodoList={(id, { todos }) => {
-        const listToUpdate = todoLists[id]
-        setTodoLists({
-          ...todoLists,
-          [id]: { ...listToUpdate, todos }
-        })
-      }}
+    {todoLists.find(todoList => todoList.id === activeListId) && <TodoListForm
+      key={activeListId} // use key to make React recreate component to reset internal state
+      todoList={todoLists.find(todoList => todoList.id === activeListId)}
+      saveTodoList={(id, { todos }) => patchTodosList(id, {title: todoLists.find(todoList => todoList.id === activeListId).title, todos}).then(() => {
+        setTodoLists(todoLists => {
+          return todoLists.map(todoList => {
+            if (todoList.id !== id) {
+              return todoList;
+            }
+
+            return {
+              ...todoList,
+              todos
+            };
+          })
+        });
+        setToastSeverity('success');
+        setToastMessage('Changes saved successfully');
+        setShowToast(true);
+      }).catch(() => {
+        setToastSeverity('error');
+        setToastMessage('An error occurred when attempting to save the changes');
+        setShowToast(true);
+      })}
     />}
+    <Snackbar
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      open={showToast}
+      autoHideDuration={2000}
+      onClose={handleCloseToast}
+    >
+      <Alert onClose={handleCloseToast} severity={toastSeverity}>
+        {toastMessage}
+      </Alert>
+    </Snackbar>
   </Fragment>
 }

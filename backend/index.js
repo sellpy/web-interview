@@ -1,12 +1,20 @@
 const express = require('express')
 const cors = require('cors')
-const app = express()
 
-app.use(cors())
-app.use(express.json())
+// get MongoDB driver connection
+const mongoDbClient = require('./database/mongoDbClient');
 
-const PORT = 3001
+const {createServer} = require("./server");
 
-app.get('/', (req, res) => res.send('Hello World!'))
+mongoDbClient.connectToServer(function (err) {
+  if (err) {
+    console.error(err);
+    process.exit();
+  }
 
-app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))
+  const PORT = 3001;
+
+  const server = createServer();
+
+  server.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))
+});

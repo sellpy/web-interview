@@ -4,16 +4,23 @@
   "description": "A sandbox for code experimentation.",
   "main": "index.js",
   "scripts": {
-    "test": "test",
+    "test": "jest",
     "start": "node index.js"
   },
   "author": "Sellpy",
   "license": "ISC",
   "dependencies": {
+    "config": "^3.3.7",
     "cors": "^2.8.5",
-    "express": "^4.17.2"
+    "express": "^4.17.2",
+    "express-validator": "^6.14.0",
+    "helmet": "^5.0.2",
+    "mongodb": "^4.4.1",
+    "ulid": "^2.3.0"
   },
   "devDependencies": {
-    "eslint": "^8.9.0"
+    "eslint": "^8.9.0",
+    "jest": "^27.5.1",
+    "supertest": "^6.2.2"
   }
 }
