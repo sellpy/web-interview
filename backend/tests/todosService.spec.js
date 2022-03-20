@@ -38,6 +38,16 @@ describe('ToDos Service', () => {
     expect(createdToDosList.todos).toEqual(expectedToDosList.todos);
   });
 
+  it('empty todos are filtered out when creating new todo lists', async () => {
+    // Create ToDos List
+    await ToDosServiceInstance.createToDosList('users', ["from test", '']);
+
+    // Fetch ToDos Lists
+    const fetchedToDosLists = await ToDosServiceInstance.getToDosLists();
+
+    expect(fetchedToDosLists[0].todos).toHaveLength(1);
+  });
+
   it('should be able to fetch todos lists', async () => {
     // Create ToDos List
     await ToDosServiceInstance.createToDosList('users', ["from test"]);
@@ -67,5 +77,18 @@ describe('ToDos Service', () => {
 
     expect(fetchedToDosLists[0].title).toEqual(expectedToDosList.title);
     expect(fetchedToDosLists[0].todos).toEqual(expectedToDosList.todos);
+  });
+
+  it('empty todos are filtered out when updating a todo list', async () => {
+    // Create ToDos List
+    const createdToDosList = await ToDosServiceInstance.createToDosList('users', ["from test"]);
+
+    // Update ToDos List
+    await ToDosServiceInstance.updateToDosList(createdToDosList.id, createdToDosList.title, ["from test", "updated from test", '']);
+
+    // Fetch ToDos Lists
+    const fetchedToDosLists = await ToDosServiceInstance.getToDosLists();
+
+    expect(fetchedToDosLists[0].todos).toHaveLength(2);
   });
 });

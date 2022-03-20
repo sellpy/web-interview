@@ -7,7 +7,9 @@ class TodosService {
   }
 
   createToDosList(newToDoListTitle, newToDoListToDos) {
-    const newToDo = {title: newToDoListTitle, todos: newToDoListToDos, id: ULID.ulid()};
+    const nonEmptyToDos = newToDoListToDos.filter(todo => todo.length > 0);
+
+    const newToDo = {title: newToDoListTitle, todos: nonEmptyToDos, id: ULID.ulid()};
 
     return this.ToDosDao.createToDosList(newToDo).then(() => newToDo);
   }
@@ -17,7 +19,9 @@ class TodosService {
   }
 
   updateToDosList(todoListId, newToDoListTitle, newToDoListToDos) {
-    return this.ToDosDao.updateToDosList(todoListId, newToDoListTitle, newToDoListToDos);
+    const nonEmptyToDos = newToDoListToDos.filter(todo => todo.length > 0);
+
+    return this.ToDosDao.updateToDosList(todoListId, newToDoListTitle, nonEmptyToDos);
   }
 }
 
