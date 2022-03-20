@@ -1,6 +1,6 @@
 const handleFetchErrors = (res) => {
   if (!res.ok) {
-    throw new Error('Unsuccessful data fetching');
+    throw new Error('Unsuccessful fetch response');
   }
 
   return res;
@@ -17,7 +17,7 @@ const patchTodosList = (id, { title, todos }) => {
     method: 'PATCH',
     body: JSON.stringify({title, todos}),
     headers
-  });
+  }).then(handleFetchErrors);
 }
 
 module.exports = {

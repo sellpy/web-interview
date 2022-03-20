@@ -1,19 +1,41 @@
 import React, { Fragment, useState, useEffect } from 'react'
-import { Card, CardContent, List, ListItem, ListItemText, ListItemIcon, Typography } from '@mui/material'
+import {
+  Card,
+  CardContent,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Typography,
+  Snackbar,
+  Alert
+} from '@mui/material'
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { TodoListForm } from './TodoListForm'
 import {getPersonalTodos, patchTodosList} from "../../utils/fetchUtils";
 
 export const TodoLists = ({ style }) => {
-  const [todoLists, setTodoLists] = useState({})
-  const [activeListId, setActiveListId] = useState()
+  const [todoLists, setTodoLists] = useState([]);
+  const [activeListId, setActiveListId] = useState();
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastSeverity, setToastSeverity] = useState('info');
 
   useEffect(() => {
     getPersonalTodos()
       .then(setTodoLists)
-  }, [])
+      .catch(() => {
+        setToastSeverity('error');
+        setToastMessage('An error occurred when fetching the todos');
+        setShowToast(true);
+      })
+  }, [setToastMessage, setToastSeverity, setShowToast]);
 
   if (!todoLists.length) return null
+
+  const handleCloseToast = () => {
+    setShowToast(false);
+  };
 
   return <Fragment>
     <Card style={style}>
@@ -53,7 +75,24 @@ export const TodoLists = ({ style }) => {
             };
           })
         });
+        setToastSeverity('success');
+        setToastMessage('Changes saved successfully');
+        setShowToast(true);
+      }).catch(() => {
+        setToastSeverity('error');
+        setToastMessage('An error occurred when attempting to save the changes');
+        setShowToast(true);
       })}
     />}
+    <Snackbar
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      open={showToast}
+      autoHideDuration={2000}
+      onClose={handleCloseToast}
+    >
+      <Alert onClose={handleCloseToast} severity={toastSeverity}>
+        {toastMessage}
+      </Alert>
+    </Snackbar>
   </Fragment>
 }
