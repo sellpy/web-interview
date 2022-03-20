@@ -1,11 +1,18 @@
 const express = require('express');
-const { checkSchema, validationResult } = require('express-validator');
+const { validationResult, body } = require('express-validator');
 const ToDosService = require('../services/todosService');
 
 const ToDosServiceInstance = new ToDosService();
 
-
 const router = express.Router();
+
+const todosSchemaValidations = [
+  body('title').custom(value => typeof value === 'string').withMessage('The ToDos list title must be a string'),
+  body('title').notEmpty().withMessage("ToDos list title cannot be empty"),
+  body('todos').custom(value => Array.isArray(value)).withMessage('The todos property must be an array'),
+  body('todos').custom(value => value.length > 0).withMessage('The todos property cannot be empty'),
+  body('todos').custom(value => value.every(element => typeof element === 'string')).withMessage('Every ToDo must be a string'),
+];
 
 // Get ToDos Lists
 router.route('/todos').get(async function (req, res, next) {
@@ -17,16 +24,7 @@ router.route('/todos').get(async function (req, res, next) {
 });
 
 // Create ToDos Lists
-router.route('/todos').post(checkSchema({
-    title: {
-      notEmpty: true,
-      errorMessage: "ToDos list title cannot be empty"
-    },
-    todos: {
-      notEmpty: true,
-      errorMessage: "At least one ToDo is necessary"
-    },
-  }), async function (req, res, next) {
+router.route('/todos').post(...todosSchemaValidations, async function (req, res, next) {
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -41,16 +39,7 @@ router.route('/todos').post(checkSchema({
 });
 
 // Patch ToDos List
-router.route('/todos/:todoListId').patch(checkSchema({
-  title: {
-    notEmpty: true,
-    errorMessage: "ToDos list title cannot be empty"
-  },
-  todos: {
-    notEmpty: true,
-    errorMessage: "At least one todo is necessary"
-  },
-}), async function (req, res, next) {
+router.route('/todos/:todoListId').patch(...todosSchemaValidations, async function (req, res, next) {
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
