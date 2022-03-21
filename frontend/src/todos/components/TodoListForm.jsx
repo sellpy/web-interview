@@ -51,7 +51,7 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
                 {index + 1}
               </Typography>
               <TextField
-                sx={{flexGrow: 1, marginTop: '1rem'}}
+                sx={{flexGrow: 1, marginTop: '1rem', textDecoration: todo.status === todoStatus.Completed ? 'line-through': 'auto'}}
                 label='What to do?'
                 value={todo.task}
                 onChange={event => {
