@@ -2,6 +2,7 @@ const request = require('supertest');
 const {createServer} = require("../server");
 const util = require("util");
 const mongoDbClient = require("../database/mongoDbClient");
+const {todoStatus} = require("../utils/models/todos");
 
 describe('ToDos Endpoints', () => {
   beforeAll(async () => {
@@ -29,7 +30,7 @@ describe('ToDos Endpoints', () => {
 
     const createTodosListPayload = {
       title: "from test!",
-      todos: ['test is cool'],
+      todos: [{task: 'test is cool', status: todoStatus.Pending}],
     };
 
     const res = await request(server)
@@ -101,7 +102,7 @@ describe('ToDos Endpoints', () => {
     expect(res.statusCode).toEqual(400);
   });
 
-  it('fails to create a new todo list and returns 400 Bad Request if the ToDos List todos is not an array of strings', async () => {
+  it('fails to create a new todo list and returns 400 Bad Request if the ToDos List todos do not have a valid shape', async () => {
     const server = createServer();
 
     const createTodosListPayload = {
@@ -116,12 +117,27 @@ describe('ToDos Endpoints', () => {
     expect(res.statusCode).toEqual(400);
   });
 
+  it('fails to create a new todo list and returns 400 Bad Request if the todo status is invalid', async () => {
+    const server = createServer();
+
+    const createTodosListPayload = {
+      title: "from test!",
+      todos: [{task: 'from test', status: 'invalid'}],
+    };
+
+    const res = await request(server)
+      .post('/todos')
+      .send(createTodosListPayload);
+
+    expect(res.statusCode).toEqual(400);
+  });
+
   it('should fetch todos lists', async () => {
     const server = createServer();
 
     const createTodosListPayload = {
       title: "from test!",
-      todos: ['test is cool'],
+      todos: [{task: 'test is cool', status: todoStatus.Pending}],
     };
 
     // Create ToDos List
@@ -147,12 +163,12 @@ describe('ToDos Endpoints', () => {
       .post('/todos')
       .send({
         title: "from test!",
-        todos: ['test is cool'],
+        todos: [{task: 'test is cool', status: todoStatus.Pending}],
       });
 
     const patchTodosListPayload = {
       title: "patched from test!",
-      todos: ['patching works'],
+      todos: [{task: 'patching works', status: todoStatus.Completed}],
     };
 
     // Patch ToDos List
@@ -180,7 +196,7 @@ describe('ToDos Endpoints', () => {
       .post('/todos')
       .send({
         title: "from test!",
-        todos: ['test is cool'],
+        todos: [{task: 'test is cool', status: todoStatus.Pending}],
       });
 
     const patchTodosListPayload = {
@@ -204,7 +220,7 @@ describe('ToDos Endpoints', () => {
       .post('/todos')
       .send({
         title: "from test!",
-        todos: ['test is cool'],
+        todos: [{task: 'test is cool', status: todoStatus.Pending}],
       });
 
     const patchTodosListPayload = {
@@ -228,7 +244,7 @@ describe('ToDos Endpoints', () => {
       .post('/todos')
       .send({
         title: "from test!",
-        todos: ['test is cool'],
+        todos: [{task: 'test is cool', status: todoStatus.Pending}],
       });
 
     const patchTodosListPayload = {
@@ -252,7 +268,7 @@ describe('ToDos Endpoints', () => {
       .post('/todos')
       .send({
         title: "from test!",
-        todos: ['test is cool'],
+        todos: [{task: 'test is cool', status: todoStatus.Pending}],
       });
 
     const patchTodosListPayload = {
@@ -268,7 +284,7 @@ describe('ToDos Endpoints', () => {
     expect(patchResponse.statusCode).toEqual(400);
   });
 
-  it('fails to patch a todo list and returns 400 Bad Request if the ToDos List todos is not an array of strings', async () => {
+  it('fails to patch a todo list and returns 400 Bad Request if the ToDos List todos has not a valid shape', async () => {
     const server = createServer();
 
     // Create ToDos List
@@ -276,7 +292,7 @@ describe('ToDos Endpoints', () => {
       .post('/todos')
       .send({
         title: "from test!",
-        todos: ['test is cool'],
+        todos: [{task: 'test is cool', status: todoStatus.Pending}],
       });
 
     const patchTodosListPayload = {
@@ -292,12 +308,36 @@ describe('ToDos Endpoints', () => {
     expect(patchResponse.statusCode).toEqual(400);
   });
 
+  it('fails to patch a todo list and returns 400 Bad Request if the todo status is invalid', async () => {
+    const server = createServer();
+
+    // Create ToDos List
+    const createTodosListResponse = await request(server)
+      .post('/todos')
+      .send({
+        title: "from test!",
+        todos: [{task: 'test is cool', status: todoStatus.Pending}],
+      });
+
+    const patchTodosListPayload = {
+      title: {ok: 'not ok'},
+      todos: [{task: 'from test', status: 'invalid'}],
+    };
+
+    // Patch ToDos List
+    const patchResponse = await request(server)
+      .patch(`/todos/${createTodosListResponse.body.id}`)
+      .send(patchTodosListPayload);
+
+    expect(patchResponse.statusCode).toEqual(400);
+  });
+
   it('patching a non-existent todos list returns 404 and is no-op', async () => {
     const server = createServer();
 
     const createTodosListPayload = {
       title: "from test!",
-      todos: ['test is cool'],
+      todos: [{task: 'test is cool', status: todoStatus.Pending}],
     };
 
     // Create ToDos List
@@ -310,7 +350,7 @@ describe('ToDos Endpoints', () => {
       .patch('/todos/clearlydoesntexist')
       .send({
         title: "patched from test!",
-        todos: ['patching works'],
+        todos: [{task: 'patching works', status: todoStatus.Pending}],
       });
 
     expect(patchResponse.statusCode).toEqual(404);
