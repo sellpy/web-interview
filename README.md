@@ -7,8 +7,11 @@ Start by forking the repository.
 ## Prerequisites
 
 NodeJS - https://nodejs.org/en/download/
+MongoDB - https://hub.docker.com/_/mongo
 
 ## Getting started
+
+Make sure that MongoDB is up and running in you local machine in port 27017.
 
 ### To start the backend:
 
