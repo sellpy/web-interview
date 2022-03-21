@@ -7,7 +7,7 @@ class TodosService {
   }
 
   createToDosList(newToDoListTitle, newToDoListToDos) {
-    const nonEmptyToDos = newToDoListToDos.filter(todo => todo.length > 0);
+    const nonEmptyToDos = newToDoListToDos.filter(todo => todo.task.length > 0);
 
     const newToDo = {title: newToDoListTitle, todos: nonEmptyToDos, id: ULID.ulid()};
 
@@ -19,7 +19,7 @@ class TodosService {
   }
 
   updateToDosList(todoListId, newToDoListTitle, newToDoListToDos) {
-    const nonEmptyToDos = newToDoListToDos.filter(todo => todo.length > 0);
+    const nonEmptyToDos = newToDoListToDos.filter(todo => todo.task.length > 0);
 
     return this.ToDosDao.updateToDosList(todoListId, newToDoListTitle, nonEmptyToDos);
   }

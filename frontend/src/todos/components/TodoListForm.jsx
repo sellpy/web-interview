@@ -1,7 +1,18 @@
-import React, { useState } from 'react'
+import React, {useCallback, useState} from 'react'
 import { TextField, Card, CardContent, CardActions, Button, Typography} from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
+import { Tooltip } from '@mui/material';
+import {todoStatus} from "../../utils/models/todos";
+import styled from "@emotion/styled";
+import Checkbox from '@mui/material/Checkbox';
+
+
+const StyledToDoButtonsContainer = styled.div(() => ({
+  display: 'flex',
+  padding: '8px',
+  gap: '8px'
+}))
 
 export const TodoListForm = ({ todoList, saveTodoList }) => {
   const [todos, setTodos] = useState(todoList.todos)
@@ -9,7 +20,23 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
   const handleSubmit = event => {
     event.preventDefault()
     saveTodoList(todoList.id, { todos })
-  }
+  };
+
+  const toggleToDoStatus = useCallback(todoIndexToToggle => {
+    setTodos(currentToDos => {
+      return currentToDos.map((todo, index) => {
+        if (index !== todoIndexToToggle) {
+          return todo;
+        }
+
+        return {
+          ...todo,
+          status: todo.status === todoStatus.Pending ? todoStatus.Completed : todoStatus.Pending
+        }
+      })
+    })
+  }, [setTodos]);
+
 
   return (
     <Card sx={{margin: '0 1rem'}}>
@@ -18,7 +45,7 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
           {todoList.title}
         </Typography>
         <form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column', flexGrow: 1}}>
-          {todos.map((name, index) => (
+          {todos.map((todo, index) => (
             <div key={index} style={{display: 'flex', alignItems: 'center'}}>
               <Typography sx={{margin: '8px'}} variant='h6'>
                 {index + 1}
@@ -26,17 +53,23 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
               <TextField
                 sx={{flexGrow: 1, marginTop: '1rem'}}
                 label='What to do?'
-                value={name}
+                value={todo.task}
                 onChange={event => {
                   setTodos([ // immutable update
                     ...todos.slice(0, index),
-                    event.target.value,
+                    // Editing a ToDo will reset its status to Pending
+                    {task: event.target.value, status: todoStatus.Pending},
                     ...todos.slice(index + 1)
                   ])
                 }}
               />
+              <StyledToDoButtonsContainer>
+                <Tooltip arrow title="status" placement="top">
+                  <Checkbox inputProps={{ 'aria-label': 'todo status' }} checked={todo.status === todoStatus.Completed} color="secondary" onChange={() => toggleToDoStatus(index)} />
+                </Tooltip>
+                <Tooltip arrow title="delete" placement="top">
               <Button
-                sx={{margin: '8px'}}
+                sx={{minWidth: '0px'}}
                 size='small'
                 color='secondary'
                 onClick={() => {
@@ -48,6 +81,8 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
               >
                 <DeleteIcon />
               </Button>
+                </Tooltip>
+              </StyledToDoButtonsContainer>
             </div>
           ))}
           <CardActions>
@@ -55,7 +90,7 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
               type='button'
               color='primary'
               onClick={() => {
-                setTodos([...todos, ''])
+                setTodos([...todos, {task: '', status: todoStatus.Pending}])
               }}
             >
               Add Todo <AddIcon />
