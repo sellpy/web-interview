@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import './App.css'
 import { AppBar, Toolbar, Typography } from '@mui/material'
 import { TodoLists } from './todos/components/TodoLists'
@@ -27,14 +27,12 @@ const MainWrapper = ({ children }) => {
   </div>
 }
 
-class App extends Component {
-  render () {
-    return <MainWrapper>
-      <TodoLists
-        style={{ margin: '1rem' }}
-      />
-    </MainWrapper>
-  }
+const App = () => {
+  return <MainWrapper>
+    <TodoLists
+      style={{ margin: '1rem' }}
+    />
+  </MainWrapper>
 }
 
 export default App
