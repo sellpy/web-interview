@@ -1,5 +1,4 @@
 import React from 'react'
-import './App.css'
 import { AppBar, Toolbar, Typography } from '@mui/material'
 import { TodoLists } from './todos/components/TodoLists'
 
