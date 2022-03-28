@@ -1,15 +1,12 @@
-# Sellpy Sandbox
+# Sellpy fullstack interview
 
-Welcome to the Sellpy Sandbox environment for fullstack development!
-
-Start by forking the repository.
-
+Welcome to Sellpy's fullstack interview repo!
 ## Prerequisites
 
-NodeJS - https://nodejs.org/en/download/
+NodeJS - if you don't already have it installed, check out [nvm](https://github.com/nvm-sh/nvm).
 
 ## Getting started
-
+Fork the repository (see top-right button on GitHub) and clone the fork to your computer.
 ### To start the backend:
 
  - Navigate to the backend folder
@@ -45,5 +42,8 @@ Persist the todo lists on the server. Persisting in a database is not required. 
 - Add a date for completion to todo items. Indicate how much time is remaining or overdue.
 
 ## Submission
+Before submitting, read through all changes one last time - code quality matters!
+
+If you have developed without ESLint set up, run `npm run lint` in both `/backend` and `/frontend` and fix any errors/warnings.
 
 Send a link to your forked repository to your contact person at Sellpy.
