@@ -4,7 +4,7 @@
   "description": "A sandbox for code experimentation.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node src/index.js"
   },
   "author": "Sellpy",
   "license": "ISC",
