@@ -4,6 +4,7 @@
   "description": "A sandbox for code experimentation.",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint --ext .js src",
     "start": "node src/index.js"
   },
   "author": "Sellpy",
