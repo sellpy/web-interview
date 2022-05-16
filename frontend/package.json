@@ -1,7 +1,4 @@
 {
-  "name": "frontend-designer-sandbox",
-  "version": "0.1.0",
-  "private": true,
   "dependencies": {
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",

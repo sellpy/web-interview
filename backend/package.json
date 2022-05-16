@@ -1,14 +1,8 @@
 {
-  "name": "sellpy-backend-sandbox",
-  "version": "1.0.0",
-  "description": "A sandbox for code experimentation.",
-  "main": "index.js",
   "scripts": {
     "lint": "eslint --ext .js src",
     "start": "node src/index.js"
   },
-  "author": "Sellpy",
-  "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.1"
