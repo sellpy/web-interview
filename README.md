@@ -28,6 +28,8 @@ You can open the root folder in one workspace, or `/frontend` and `/backend` in 
 
 The version of the `package-lock.json` files is v2, so use node v16 or higher to not introduce unnecessary changes. Just run `nvm use` if you have `nvm` installed.
 
+For those of you using Prettier (not a requirement), there's an .prettierrc file to ensure no unnecessary changes to the existing code. It should be picked up automatically by Prettier.
+
 ## Assignment
 Your assignment is to improve this todo list application. At the moment the application is simple and can only create and remove todos.
 As is, nothing is persisted in the server. As a result all state is cleared when refreshing the page!
