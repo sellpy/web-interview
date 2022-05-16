@@ -26,6 +26,8 @@ If you don't have a favorite editor we highly recommend [VSCode](https://code.vi
 
 You can open the root folder in one workspace, or `/frontend` and `/backend` in seperate workspaces - both should work fine.
 
+The version of the `package-lock.json` files is v2, so use node v16 or higher to not introduce unnecessary changes. Just run `nvm use` if you have `nvm` installed.
+
 ## Assignment
 Your assignment is to improve this todo list application. At the moment the application is simple and can only create and remove todos.
 As is, nothing is persisted in the server. As a result all state is cleared when refreshing the page!
