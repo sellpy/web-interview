@@ -14,6 +14,15 @@ Fork the repository (see top-right button on GitHub) and clone the fork to your 
 
 You should then be able to navigate to `localhost:3000` to access the frontend.
 
+### Installing packages
+The containers install packages from `package.json` themselves upon startup. But it is also recommended to keep the `node_modules` directories updated on the host machine to get package information in the code editor.
+
+#### To install a package (when apps are already running):
+- Install it normally on the host machine, in the app's directory, e.g. `npm i react`.
+- Sync the container packages with the updated `package.json` file, by running:
+    - `docker-compose exec backend npm i` for backend.
+    - `docker-compose exec frontend npm i` for frontend.
+
 ### Development set-up
 If you don't have a favorite editor we highly recommend [VSCode](https://code.visualstudio.com). We've also had some ESLint rules set up which will help you catch bugs etc. If you're using VSCode, install the regular [ESLint plugin](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) and you should be good to go!
 

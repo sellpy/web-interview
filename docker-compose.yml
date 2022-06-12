@@ -13,18 +13,28 @@ services:
   backend:
     build: ./backend
     container_name: backend
+    env_file:
+      - ./backend/.env
     ports:
       - 3001:3001
-    links:
+    depends_on:
       - mongodb
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
 
   frontend:
     build: ./frontend
     container_name: frontend
+    env_file:
+      - ./frontend/.env
     ports:
       - 3000:3000
     links:
       - backend
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
 
 volumes:
   dbdata:
