@@ -11,9 +11,10 @@ import {
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { TodoListForm } from './TodoListForm'
 
+// Simulate network
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
-const getPersonalTodos = () => {
+const fetchTodoLists = () => {
   return sleep(1000).then(() =>
     Promise.resolve({
       '0000000001': {
@@ -35,7 +36,7 @@ export const TodoLists = ({ style }) => {
   const [activeList, setActiveList] = useState()
 
   useEffect(() => {
-    getPersonalTodos().then(setTodoLists)
+    fetchTodoLists().then(setTodoLists)
   }, [])
 
   if (!Object.keys(todoLists).length) return null
