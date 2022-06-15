@@ -10,6 +10,11 @@ Welcome to Sellpy's fullstack interview repo!
 Fork the repository (see top-right button on GitHub) and clone the fork to your computer.
 ### To start the app:
 
+- Copy the `.env` files. There are 3 `.env` files, in the project root directory, in `./frontend` and in `./backend`. You can do this either manually or by running this command in the root project directory:
+  - **Mac/Linux**: `cp example.env .env && cp frontend/example.env frontend/.env && cp backend/example.env backend/.env`.
+  - **Windows**: `copy "example.env" ".env" & copy "frontend/example.env" "frontend/.env" & copy "backend/example.env" "backend/.env"`.
+- Make sure Docker is running.
+- Make sure no other apps are occupying the ports that are going to be used. Default ports are `3000`, `3001` and `27017`.
 - Run `docker-compose up` or `docker-compose up -d` to also detach the terminal.
 
 You should then be able to navigate to `localhost:3000` to access the frontend.
