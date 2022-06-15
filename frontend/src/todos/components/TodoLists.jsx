@@ -10,47 +10,36 @@ import {
 } from '@mui/material'
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { TodoListForm } from './TodoListForm'
-
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-
-const getPersonalTodos = () => {
-  return sleep(1000).then(() =>
-    Promise.resolve({
-      '0000000001': {
-        id: '0000000001',
-        title: 'First List',
-        todos: ['First todo of first list!'],
-      },
-      '0000000002': {
-        id: '0000000002',
-        title: 'Second List',
-        todos: ['First todo of second list!'],
-      },
-    })
-  )
-}
+import TodoListRequests from '../../requests/todo-list.requests'
 
 export const TodoLists = ({ style }) => {
-  const [todoLists, setTodoLists] = useState({})
+  const [todoLists, setTodoLists] = useState([])
   const [activeList, setActiveList] = useState()
 
   useEffect(() => {
-    getPersonalTodos().then(setTodoLists)
+    const getTodoLists = async () => {
+      const todoLists = await TodoListRequests.getTodoLists()
+      if (todoLists) {
+        setTodoLists(todoLists)
+      }
+    }
+
+    getTodoLists()
   }, [])
 
-  if (!Object.keys(todoLists).length) return null
+  if (!todoLists.length) return null
   return (
     <Fragment>
       <Card style={style}>
         <CardContent>
           <Typography component='h2'>My Todo Lists</Typography>
           <List>
-            {Object.keys(todoLists).map((key) => (
-              <ListItem key={key} button onClick={() => setActiveList(key)}>
+            {todoLists.map((todoList, index) => (
+              <ListItem key={todoList._id} button onClick={() => setActiveList(index)}>
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
-                <ListItemText primary={todoLists[key].title} />
+                <ListItemText primary={todoList.title} />
               </ListItem>
             ))}
           </List>
@@ -60,13 +49,6 @@ export const TodoLists = ({ style }) => {
         <TodoListForm
           key={activeList} // use key to make React recreate component to reset internal state
           todoList={todoLists[activeList]}
-          saveTodoList={(id, { todos }) => {
-            const listToUpdate = todoLists[id]
-            setTodoLists({
-              ...todoLists,
-              [id]: { ...listToUpdate, todos },
-            })
-          }}
         />
       )}
     </Fragment>
