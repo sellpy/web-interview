@@ -1,18 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import {
-  TextField,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  Typography,
-  Checkbox,
-} from '@mui/material'
+import { Card, CardContent, CardActions, Button, Typography } from '@mui/material'
 import CheckIcon from '@mui/icons-material/Check'
-import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import { debounce } from '../../utils/common-functions.util'
 import TodoRequests from '../../requests/todo.requests'
+import { Todo } from './Todo'
 
 const debouncedUpdateTodoRequest = debounce(TodoRequests.updateTodo, 500)
 
@@ -33,7 +25,7 @@ export const TodoListForm = ({ todoList }) => {
   }, [todoList._id])
 
   useEffect(() => {
-    setAllCompleted(todos.every((todo) => todo.completed))
+    setAllCompleted((todos.every((todo) => todo.completed) && todos.length) || false)
   }, [todos])
 
   const addTodo = async () => {
@@ -88,29 +80,13 @@ export const TodoListForm = ({ todoList }) => {
         </Typography>
         <form style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
           {todos.map((todo, index) => (
-            <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
-              <Typography sx={{ margin: '8px' }} variant='h6'>
-                {index + 1}
-              </Typography>
-              <Checkbox
-                sx={{ margin: '8px' }}
-                checked={todo.completed}
-                onChange={(event) => updateTodo(index, { completed: event.target.checked })}
-              />
-              <TextField
-                sx={{
-                  flexGrow: 1,
-                  marginTop: '1rem',
-                  textDecoration: todo.completed ? 'line-through' : 'none',
-                }}
-                label='What to do?'
-                value={todo.title}
-                onChange={(event) => updateTodo(index, { title: event.target.value }, true)}
-              />
-              <Button size='small' color='secondary' onClick={() => deleteTodo(index)}>
-                <DeleteIcon />
-              </Button>
-            </div>
+            <Todo
+              key={index}
+              todo={todo}
+              todoIndex={index}
+              updateTodo={(...args) => updateTodo(index, ...args)}
+              deleteTodo={() => deleteTodo(index)}
+            />
           ))}
           <CardActions>
             <Button type='button' color='primary' onClick={addTodo}>

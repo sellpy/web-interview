@@ -10,6 +10,10 @@ const TodoSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  deadline: {
+    type: Date,
+    default: null,
+  },
 })
 
 const TodoModel = mongoose.model('Todo', TodoSchema)

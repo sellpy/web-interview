@@ -1,4 +1,6 @@
 import React from 'react'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { AppBar, Toolbar, Typography } from '@mui/material'
 import { TodoLists } from './todos/components/TodoLists'
 
@@ -24,12 +26,14 @@ const contentWrapperStyle = {
 }
 const MainWrapper = ({ children }) => {
   return (
-    <div style={mainWrapperStyle}>
-      <MainAppBar />
-      <div style={centerContentWrapper}>
-        <div style={contentWrapperStyle}>{children}</div>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <div style={mainWrapperStyle}>
+        <MainAppBar />
+        <div style={centerContentWrapper}>
+          <div style={contentWrapperStyle}>{children}</div>
+        </div>
       </div>
-    </div>
+    </LocalizationProvider>
   )
 }
 

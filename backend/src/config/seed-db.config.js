@@ -19,10 +19,12 @@ const seedDBIfEmpty = async () => {
         {
           todoList: todoLists[0]._id,
           title: 'First todo of first list!',
+          deadline: new Date(Date.now() + 1000 * 60 * 60),
         },
         {
           todoList: todoLists[1]._id,
           title: 'First todo of second list!',
+          deadline: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
         },
       ])
 

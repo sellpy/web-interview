@@ -37,15 +37,16 @@ class TodoController {
 
   static async updateTodo(req, res) {
     try {
-      const { title, completed } = req.body
+      const { title, completed, deadline } = req.body
 
-      const missingParamResponse = checkMissingAllParameters({ title, completed })
+      const missingParamResponse = checkMissingAllParameters({ title, completed, deadline })
       if (missingParamResponse)
         return res.status(missingParamResponse.code).json(missingParamResponse)
 
       const updates = {}
       if (title !== undefined) updates.title = title
       if (completed !== undefined) updates.completed = completed
+      if (deadline !== undefined) updates.deadline = deadline
 
       await TodoModel.findOneAndUpdate({ _id: req.params.todoID }, updates)
 
