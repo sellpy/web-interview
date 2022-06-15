@@ -39,14 +39,14 @@ class TodoRequests {
     }
   }
 
-  static async updateTodo(todoListID, updatedTodo) {
+  static async updateTodo(todoListID, todoID, updates) {
     try {
-      const response = await fetch(`${API_URL}/todo-lists/${todoListID}/todos/${updatedTodo._id}`, {
+      const response = await fetch(`${API_URL}/todo-lists/${todoListID}/todos/${todoID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedTodo),
+        body: JSON.stringify(updates),
       })
 
       if (!response.ok) {

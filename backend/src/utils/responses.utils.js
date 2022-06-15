@@ -8,6 +8,7 @@ const internalServerError = (req, res, error) => {
   res.status(INTERNAL_SERVER_ERROR.code).json(INTERNAL_SERVER_ERROR)
 }
 
+// Gives error response if any of the required parameters are missing.
 const checkMissingParameters = (requiredParameters) => {
   const missingParameters = Object.entries(requiredParameters)
     .map(([paramKey, paramValue]) => {
@@ -23,7 +24,21 @@ const checkMissingParameters = (requiredParameters) => {
   }
 }
 
+// Gives error response if all of the parameters are missing.
+const checkMissingAllParameters = (parameters) => {
+  const anyParameterExists =
+    Object.values(parameters).find((value) => value !== undefined) !== undefined
+
+  if (!anyParameterExists) {
+    return {
+      code: 400,
+      message: 'Missing parameters.',
+    }
+  }
+}
+
 module.exports = {
   internalServerError,
   checkMissingParameters,
+  checkMissingAllParameters,
 }

@@ -1,5 +1,9 @@
 const { TodoModel } = require('../models')
-const { internalServerError, checkMissingParameters } = require('../utils/responses.utils')
+const {
+  internalServerError,
+  checkMissingParameters,
+  checkMissingAllParameters,
+} = require('../utils/responses.utils')
 
 class TodoController {
   static async getTodos(req, res) {
@@ -33,13 +37,17 @@ class TodoController {
 
   static async updateTodo(req, res) {
     try {
-      const { title } = req.body
+      const { title, completed } = req.body
 
-      const missingParamResponse = checkMissingParameters({ title })
+      const missingParamResponse = checkMissingAllParameters({ title, completed })
       if (missingParamResponse)
         return res.status(missingParamResponse.code).json(missingParamResponse)
 
-      await TodoModel.findOneAndUpdate({ _id: req.params.todoID }, { title })
+      const updates = {}
+      if (title !== undefined) updates.title = title
+      if (completed !== undefined) updates.completed = completed
+
+      await TodoModel.findOneAndUpdate({ _id: req.params.todoID }, updates)
 
       res.status(204).send()
     } catch (error) {

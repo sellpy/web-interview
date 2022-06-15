@@ -6,6 +6,10 @@ const TodoSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  completed: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const TodoModel = mongoose.model('Todo', TodoSchema)
