@@ -1,5 +1,13 @@
 import React, { useState } from 'react'
-import { TextField, Card, CardContent, CardActions, Button, Typography } from '@mui/material'
+import {
+  TextField,
+  Card,
+  CardContent,
+  CardActions,
+  Button,
+  Typography,
+  Checkbox,
+} from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 
@@ -19,7 +27,7 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
           onSubmit={handleSubmit}
           style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}
         >
-          {todos.map((name, index) => (
+          {todos.map(({ todo, completed }, index) => (
             <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
               <Typography sx={{ margin: '8px' }} variant='h6'>
                 {index + 1}
@@ -27,15 +35,33 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
               <TextField
                 sx={{ flexGrow: 1, marginTop: '1rem' }}
                 label='What to do?'
-                value={name}
-                onChange={(event) => {
+                value={todo}
+                onChange={(event) =>
                   setTodos([
                     // immutable update
                     ...todos.slice(0, index),
-                    event.target.value,
+                    {
+                      todo: event.target.value,
+                      completed: completed,
+                    },
                     ...todos.slice(index + 1),
                   ])
-                }}
+                }
+              />
+              <Checkbox
+                label='Completed'
+                checked={completed}
+                onChange={(event) =>
+                  setTodos([
+                    // immutable update
+                    ...todos.slice(0, index),
+                    {
+                      todo: todo,
+                      completed: event.target.checked,
+                    },
+                    ...todos.slice(index + 1),
+                  ])
+                }
               />
               <Button
                 sx={{ margin: '8px' }}
