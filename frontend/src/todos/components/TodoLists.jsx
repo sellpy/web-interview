@@ -1,39 +1,69 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useState, useEffect, useCallback } from 'react'
 import {
   Card,
   CardContent,
   List,
-  ListItem,
+  ListItemButton,
   ListItemText,
   ListItemIcon,
   Typography,
 } from '@mui/material'
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { TodoListForm } from './TodoListForm'
-
-// Simulate network
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+import { Check, Close } from '@mui/icons-material'
 
 const fetchTodoLists = () => {
-  return sleep(1000).then(() =>
-    Promise.resolve({
-      '0000000001': {
-        id: '0000000001',
-        title: 'First List',
-        todos: ['First todo of first list!'],
-      },
-      '0000000002': {
-        id: '0000000002',
-        title: 'Second List',
-        todos: ['First todo of second list!'],
-      },
-    })
-  )
+  return new Promise(async (resolve, reject) => {
+    const res = await fetch("http://localhost:3001/gettodos", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+    if(res.ok) {
+      resolve(JSON.parse(await res.text()));
+    } else {
+      reject("Could not get data");
+    }
+  });
 }
+
+let changeTimer = null
+const timeBeforeSave = 250
 
 export const TodoLists = ({ style }) => {
   const [todoLists, setTodoLists] = useState({})
   const [activeList, setActiveList] = useState()
+  const [changed, setChanged] = useState(false);
+
+  useEffect(_ => {
+    if (!changed) {
+      return;
+    }
+    changeTimer != null && clearTimeout(changeTimer);
+    changeTimer = setTimeout(() => {
+      fetch("http://localhost:3001/settodos", {
+        method: "POST",
+        body: JSON.stringify(todoLists),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+      setChanged(false);
+      changeTimer = null
+      }, timeBeforeSave)
+    }, [todoLists, changed])
+
+  const updateTodos = useCallback((todos) => {
+    const id = todoLists[activeList].id;
+    const listToUpdate = todoLists[id]
+    const newData = {
+      ...todoLists,
+      [id]: { ...listToUpdate, todos },
+    }
+    setTodoLists(newData)
+    setChanged(true)
+  }, [activeList, todoLists])
 
   useEffect(() => {
     fetchTodoLists().then(setTodoLists)
@@ -47,12 +77,13 @@ export const TodoLists = ({ style }) => {
           <Typography component='h2'>My Todo Lists</Typography>
           <List>
             {Object.keys(todoLists).map((key) => (
-              <ListItem key={key} button onClick={() => setActiveList(key)}>
+              <ListItemButton key={key} onClick={() => setActiveList(key)}>
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
                 <ListItemText primary={todoLists[key].title} />
-              </ListItem>
+                {todoLists[key].todos.find(t => !t.completed)?<Close/>:<Check/>}
+              </ListItemButton>
             ))}
           </List>
         </CardContent>
@@ -61,13 +92,7 @@ export const TodoLists = ({ style }) => {
         <TodoListForm
           key={activeList} // use key to make React recreate component to reset internal state
           todoList={todoLists[activeList]}
-          saveTodoList={(id, { todos }) => {
-            const listToUpdate = todoLists[id]
-            setTodoLists({
-              ...todoLists,
-              [id]: { ...listToUpdate, todos },
-            })
-          }}
+          saveTodoList={updateTodos}
         />
       )}
     </Fragment>
