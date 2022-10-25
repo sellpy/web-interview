@@ -1,6 +1,6 @@
-# Sellpy fullstack interview
+# Sellpy web interview
 
-Welcome to Sellpy's fullstack interview repo!
+Welcome to Sellpy's web interview repo!
 ## Prerequisites
 
 NodeJS - if you don't already have it installed, check out [nvm](https://github.com/nvm-sh/nvm).
