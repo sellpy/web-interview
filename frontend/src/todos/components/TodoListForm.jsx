@@ -1,14 +1,47 @@
 import React, { useState } from 'react'
 import { TextField, Card, CardContent, CardActions, Button, Typography } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AddIcon from '@mui/icons-material/Add'
+import EditIcon from '@mui/icons-material/Edit';
 
 export const TodoListForm = ({ todoList, saveTodoList }) => {
   const [todos, setTodos] = useState(todoList.todos)
 
+
+  const handleChange = (index, value) => {
+    const newTodos = [
+      ...todos.slice(0, index),
+      {name: value, completed: todos[index].completed},
+      ...todos.slice(index + 1),
+    ]
+    saveTodoList(todoList.id, { todos: newTodos })
+    setTodos(newTodos)
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault()
     saveTodoList(todoList.id, { todos })
+  }
+
+  const handleDelete = (index) => {
+    const newTodos = [
+      ...todos.slice(0, index),
+      ...todos.slice(index + 1),
+    ]
+    saveTodoList(todoList.id, {todos: newTodos})
+    setTodos(newTodos)
+
+  }
+
+  const handleCompleted = (index, isCompleted) => {
+    const newTodos = [
+      ...todos.slice(0, index),
+      {name: todos[index].name, completed: isCompleted},
+      ...todos.slice(index + 1),
+    ]
+    saveTodoList(todoList.id, { todos: newTodos })
+    setTodos(newTodos)
   }
 
   return (
@@ -19,47 +52,51 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
           onSubmit={handleSubmit}
           style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}
         >
-          {todos.map((name, index) => (
+          {todos.map((todo, index) => (
             <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
               <Typography sx={{ margin: '8px' }} variant='h6'>
                 {index + 1}
               </Typography>
               <TextField
-                sx={{ flexGrow: 1, marginTop: '1rem' }}
+                sx={{ flexGrow: 1, marginTop: '1rem', maxWidth: '50rem' }}
                 label='What to do?'
-                value={name}
-                onChange={(event) => {
-                  setTodos([
-                    // immutable update
-                    ...todos.slice(0, index),
-                    event.target.value,
-                    ...todos.slice(index + 1),
-                  ])
-                }}
+                value={todo.name}
+                onChange={(event) => handleChange(index, event.target.value)}
+                disabled={todo.completed}
               />
-              <Button
+              {todo.completed ? 
+              <Button 
                 sx={{ margin: '8px' }}
-                size='small'
-                color='secondary'
-                onClick={() => {
-                  setTodos([
-                    // immutable delete
-                    ...todos.slice(0, index),
-                    ...todos.slice(index + 1),
-                  ])
-                }}
+                color='primary'
+                onClick={() => handleCompleted(index, false)}
               >
-                <DeleteIcon />
-              </Button>
+                <EditIcon />
+              </Button> :
+              <>
+                <Button
+                  sx={{ margin: '8px' }}
+                  size='small'
+                  color='secondary'
+                  onClick={() => handleDelete(index)}
+                >
+                    <DeleteIcon />
+                </Button>
+                <Button 
+                  sx={{ margin: '8px' }}
+                  color='success'
+                  onClick={() => handleCompleted(index, true)}
+                >
+                  <CheckCircleIcon />
+                </Button>
+              </>
+              }
             </div>
           ))}
           <CardActions>
             <Button
               type='button'
               color='primary'
-              onClick={() => {
-                setTodos([...todos, ''])
-              }}
+              onClick={() => setTodos([...todos, {name:'', completed: false}])}
             >
               Add Todo <AddIcon />
             </Button>
