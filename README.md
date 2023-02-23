@@ -10,14 +10,14 @@ Fork the repository (see top-right button on GitHub) and clone the fork to your 
 ### To start the backend:
 
  - Navigate to the backend folder
- - Run 'npm ci'
- - Run 'npm start'
+ - Run `npm ci`
+ - Run `npm start`
 
 ### To start the frontend:
 
  - Navigate to the frontend folder
- - Run 'npm ci'
- - Run 'npm start'
+ - Run `npm ci`
+ - Run `npm start`
 
  A browsertab will automatically open and load the app.
 
