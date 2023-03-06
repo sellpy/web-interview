@@ -3,7 +3,7 @@ import {
   Card,
   CardContent,
   List,
-  ListItem,
+  ListItemButton,
   ListItemText,
   ListItemIcon,
   Typography,
@@ -47,12 +47,12 @@ export const TodoLists = ({ style }) => {
           <Typography component='h2'>My Todo Lists</Typography>
           <List>
             {Object.keys(todoLists).map((key) => (
-              <ListItem key={key} button onClick={() => setActiveList(key)}>
+              <ListItemButton key={key} onClick={() => setActiveList(key)}>
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
                 <ListItemText primary={todoLists[key].title} />
-              </ListItem>
+              </ListItemButton>
             ))}
           </List>
         </CardContent>
