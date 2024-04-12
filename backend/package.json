@@ -1,7 +1,7 @@
 {
   "scripts": {
     "lint": "eslint --ext .js src",
-    "start": "node src/index.js"
+    "start": "node --watch src/index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
