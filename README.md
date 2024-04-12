@@ -26,7 +26,7 @@ If you don't have a favorite editor we highly recommend [VSCode](https://code.vi
 
 You can open the root folder in one workspace, or `/frontend` and `/backend` in seperate workspaces - both should work fine.
 
-The version of the `package-lock.json` files is v2, so use node v16 or higher to not introduce unnecessary changes. Just run `nvm use` if you have `nvm` installed.
+Check `.nvmrc` to see what node version is required to run the project. Just run `nvm use` if you have `nvm` installed. Later versions of node might work fine as well, but probably not earlier versions.
 
 For those of you using Prettier (not a requirement), there's an .prettierrc file to ensure no unnecessary changes to the existing code. It should be picked up automatically by Prettier.
 
