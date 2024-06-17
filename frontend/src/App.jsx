@@ -1,6 +1,15 @@
-import React from 'react'
 import { AppBar, Toolbar, Typography } from '@mui/material'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3'
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import React from 'react'
 import { TodoLists } from './todos/components/TodoLists'
+
+const queryClient = new QueryClient()
 
 const MainAppBar = () => {
   return (
@@ -35,9 +44,14 @@ const MainWrapper = ({ children }) => {
 
 const App = () => {
   return (
-    <MainWrapper>
-      <TodoLists style={{ margin: '1rem' }} />
-    </MainWrapper>
+    <QueryClientProvider client={queryClient}>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <MainWrapper>
+          <TodoLists style={{ margin: '1rem' }} />
+        </MainWrapper>
+      </LocalizationProvider>
+      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools />}
+    </QueryClientProvider>
   )
 }
 

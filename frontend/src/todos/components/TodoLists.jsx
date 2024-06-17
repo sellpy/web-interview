@@ -1,74 +1,101 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import { DoneAll, Receipt } from '@mui/icons-material'
 import {
   Card,
   CardContent,
   List,
   ListItemButton,
-  ListItemText,
   ListItemIcon,
+  ListItemText,
   Typography,
 } from '@mui/material'
-import ReceiptIcon from '@mui/icons-material/Receipt'
+import React, { Fragment } from 'react'
+import { useTodoList } from '../../hooks/useTodoList'
 import { TodoListForm } from './TodoListForm'
 
-// Simulate network
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-
-const fetchTodoLists = () => {
-  return sleep(1000).then(() =>
-    Promise.resolve({
-      '0000000001': {
-        id: '0000000001',
-        title: 'First List',
-        todos: ['First todo of first list!'],
-      },
-      '0000000002': {
-        id: '0000000002',
-        title: 'Second List',
-        todos: ['First todo of second list!'],
-      },
-    })
-  )
-}
-
 export const TodoLists = ({ style }) => {
-  const [todoLists, setTodoLists] = useState({})
-  const [activeList, setActiveList] = useState()
+  const {
+    activeListId,
+    isError,
+    isFetching,
+    isPending,
+    saveTodoList,
+    setActiveListId,
+    todoLists,
+  } = useTodoList()
 
-  useEffect(() => {
-    fetchTodoLists().then(setTodoLists)
-  }, [])
+  if (isError) {
+    return (
+      <Card style={style} >
+        <CardContent>
+          <Typography component='h2'>Error</Typography>
+          <Typography component='p'>Failed to load todo lists</Typography>
+        </CardContent>
+      </Card>
+    )
+  }
 
-  if (!Object.keys(todoLists).length) return null
+  if (isPending) {
+    return (
+      <Card style={style}>
+        <CardContent>
+          <Typography component='h2'>Loading...</Typography>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  const activeTodoList = todoLists[activeListId]
+
   return (
     <Fragment>
       <Card style={style}>
         <CardContent>
           <Typography component='h2'>My Todo Lists</Typography>
           <List>
-            {Object.keys(todoLists).map((key) => (
-              <ListItemButton key={key} onClick={() => setActiveList(key)}>
-                <ListItemIcon>
-                  <ReceiptIcon />
-                </ListItemIcon>
-                <ListItemText primary={todoLists[key].title} />
-              </ListItemButton>
-            ))}
+            {Object.values(todoLists).map(({ id, todos, title }) => {
+              const completedTodos = todos.filter((todo) => todo.status === 'done')
+              const remainingTodos = todos.length - completedTodos.length
+              const allTodosDone = todos.length === completedTodos.length
+              const overDueTodos = todos.filter((todo) => new Date(todo.dueDate) < new Date())
+
+              return (
+                <ListItemButton
+                  key={id}
+                  onClick={() => {
+                    setActiveListId(id)
+                  }}
+                >
+                  <ListItemIcon>
+                    <Receipt />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={title}
+                    secondary={`${completedTodos.length} completed / ${remainingTodos} remaining / ${overDueTodos.length} overdue`}
+                  />
+                  <ListItemIcon>
+                    <DoneAll color={allTodosDone ? 'success' : 'disabled'} />
+                  </ListItemIcon>
+                </ListItemButton>
+              )
+            })}
           </List>
         </CardContent>
       </Card>
-      {todoLists[activeList] && (
+
+      {activeTodoList && (
         <TodoListForm
-          key={activeList} // use key to make React recreate component to reset internal state
-          todoList={todoLists[activeList]}
-          saveTodoList={(id, { todos }) => {
-            const listToUpdate = todoLists[id]
-            setTodoLists({
-              ...todoLists,
-              [id]: { ...listToUpdate, todos },
-            })
-          }}
+          key={activeTodoList.id} // use key to make React recreate component to reset internal state
+          todoList={activeTodoList}
+          saveTodoList={saveTodoList}
         />
+      )}
+
+      {isFetching && (
+        <Card style={style}>
+          <CardContent>
+            <Typography component='p'>Fetching...</Typography>
+          </CardContent>
+        </Card>
       )}
     </Fragment>
   )
