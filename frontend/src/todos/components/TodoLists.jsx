@@ -10,33 +10,23 @@ import {
 } from '@mui/material'
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import { TodoListForm } from './TodoListForm'
-
-// Simulate network
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-
-const fetchTodoLists = () => {
-  return sleep(1000).then(() =>
-    Promise.resolve({
-      '0000000001': {
-        id: '0000000001',
-        title: 'First List',
-        todos: ['First todo of first list!'],
-      },
-      '0000000002': {
-        id: '0000000002',
-        title: 'Second List',
-        todos: ['First todo of second list!'],
-      },
-    })
-  )
-}
+import { TodoListsApi } from '../api/todoLists.model'
 
 export const TodoLists = ({ style }) => {
   const [todoLists, setTodoLists] = useState({})
   const [activeList, setActiveList] = useState()
 
   useEffect(() => {
-    fetchTodoLists().then(setTodoLists)
+    const loadTodoLists = async () => {
+      try {
+        const lists = await TodoListsApi.fetchTodoLists()
+        setTodoLists(lists)
+      } catch (error) {
+        console.error('Error loading todo lists:', error)
+      }
+    }
+
+    loadTodoLists()
   }, [])
 
   if (!Object.keys(todoLists).length) return null
@@ -59,14 +49,20 @@ export const TodoLists = ({ style }) => {
       </Card>
       {todoLists[activeList] && (
         <TodoListForm
-          key={activeList} // use key to make React recreate component to reset internal state
+          key={activeList}
           todoList={todoLists[activeList]}
           saveTodoList={(id, { todos }) => {
             const listToUpdate = todoLists[id]
-            setTodoLists({
-              ...todoLists,
-              [id]: { ...listToUpdate, todos },
-            })
+            TodoListsApi.saveTodoList(id, listToUpdate.title, todos)
+              .then(() => {
+                setTodoLists({
+                  ...todoLists,
+                  [id]: { ...listToUpdate, todos },
+                })
+              })
+              .catch((error) => {
+                console.error('Error saving todo list:', error)
+              })
           }}
         />
       )}
