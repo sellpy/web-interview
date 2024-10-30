@@ -110,39 +110,62 @@ export const TodoLists = ({ style }) => {
             )}
           </Box>
           <List>
-            {Object.keys(todoLists).map((key) => (
-              <ListItemButton
-                key={key}
-                onClick={() => setActiveList(key)}
-                sx={{
-                  position: 'relative',
-                  '& .delete-button': {
-                    display: 'none',
-                    position: 'absolute',
-                    right: 8,
-                  },
-                  '&:hover .delete-button': {
-                    display: 'inline-flex',
-                  },
-                }}
-              >
-                <ListItemIcon>
-                  <ReceiptIcon />
-                </ListItemIcon>
-                <ListItemText primary={todoLists[key].title} />
-                <IconButton
-                  className='delete-button'
-                  color='error'
-                  size='small'
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleDeleteList(key)
+            {Object.keys(todoLists).map((key) => {
+              const allCompleted = todoLists[key].todos.every((todo) => todo.completed)
+              return (
+                <ListItemButton
+                  key={key}
+                  onClick={() => setActiveList(key)}
+                  sx={{
+                    position: 'relative',
+                    '& .delete-button': {
+                      display: 'none',
+                      position: 'absolute',
+                      right: 8,
+                    },
+                    '&:hover .delete-button': {
+                      display: 'inline-flex',
+                    },
                   }}
                 >
-                  <DeleteIcon fontSize='small' />
-                </IconButton>
-              </ListItemButton>
-            ))}
+                  <ListItemIcon>
+                    <ReceiptIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={todoLists[key].title}
+                    secondary={
+                      todoLists[key].todos.length === 0
+                        ? 'Empty list...'
+                        : `${todoLists[key].todos.filter((todo) => todo.completed).length} / ${
+                            todoLists[key].todos.length
+                          } ${todoLists[key].todos.length === 1 ? 'todo' : 'todos'} completed`
+                    }
+                    sx={{
+                      '& .MuiListItemText-secondary': {
+                        fontSize: '0.8rem',
+                        color:
+                          todoLists[key].todos.length > 0 && allCompleted
+                            ? 'success.main'
+                            : 'text.secondary',
+                        fontWeight:
+                          todoLists[key].todos.length > 0 && allCompleted ? 'bold' : 'normal',
+                      },
+                    }}
+                  />
+                  <IconButton
+                    className='delete-button'
+                    color='error'
+                    size='small'
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleDeleteList(key)
+                    }}
+                  >
+                    <DeleteIcon fontSize='small' />
+                  </IconButton>
+                </ListItemButton>
+              )
+            })}
             {isAddingNew && (
               <Box display='flex' alignItems='center' gap={1} sx={{ mb: 1 }}>
                 <TextField
