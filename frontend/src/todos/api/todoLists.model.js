@@ -61,4 +61,16 @@ export class TodoListsApi {
 
     return response.json()
   }
+
+  static async deleteTodoList(id) {
+    const response = await fetch(`${API_BASE_URL}/todo-lists/${id}`, {
+      method: 'DELETE',
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to delete todo list')
+    }
+
+    return response.json()
+  }
 }
