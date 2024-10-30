@@ -1,16 +1,14 @@
 /**
  * @typedef {Object} Todo
- * @property {number} id - Auto-incrementing ID from SQLite
  * @property {string} content - The todo item text
  * @property {boolean} completed - Whether the todo is completed
- * @property {string} list_id - Foreign key reference to TodoList
  */
 
 /**
  * @typedef {Object} TodoList
  * @property {string} id - Unique identifier for the todo list
  * @property {string} title - The title of the todo list
- * @property {string[]} todos - Array of todo item contents
+ * @property {Todo[]} todos - Array of todo items
  */
 
 /**
@@ -39,7 +37,7 @@ export class TodoListsApi {
    * Saves or updates a todo list
    * @param {string} id - The ID of the todo list
    * @param {string} title - The title of the todo list
-   * @param {string[]} todos - Array of todo item contents
+   * @param {Todo[]} todos - Array of todo items
    * @returns {Promise<{success: boolean}>} Success status from the backend
    * @throws {Error} If the network request fails
    */
@@ -51,7 +49,10 @@ export class TodoListsApi {
       },
       body: JSON.stringify({
         title,
-        todos,
+        todos: todos.map((todo) => ({
+          content: todo.content || '',
+          completed: todo.completed ? 1 : 0,
+        })),
       }),
     })
 

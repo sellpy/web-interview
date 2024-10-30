@@ -1,43 +1,29 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { TextField, Card, CardContent, CardActions, Button, Typography } from '@mui/material'
-import DeleteIcon from '@mui/icons-material/Delete'
+import React from 'react'
+import { Card, CardContent, CardActions, Button, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import { useDebounce } from '../../utils/hooks'
+import { TodoItem } from './TodoItem'
+import { useTodos } from '../hooks/useTodos'
 
 export const TodoListForm = ({ todoList, saveTodoList }) => {
-  const [todos, setTodos] = useState(todoList.todos)
-  const saveCallback = useCallback(
-    (todos) => {
-      saveTodoList(todoList.id, { todos })
-    },
-    [todoList.id, saveTodoList]
+  const { todos, addTodo, updateTodo, toggleTodo, deleteTodo } = useTodos(todoList.todos, (todos) =>
+    saveTodoList(todoList.id, { todos })
   )
-
-  const debouncedSave = useDebounce(saveCallback, 400)
-
-  useEffect(() => {
-    if (todos !== todoList.todos) {
-      debouncedSave(todos)
-    }
-  }, [todos, debouncedSave, todoList.todos])
 
   const handleSubmit = (event) => {
     if (event) {
       event.preventDefault()
     }
-    saveTodoList(todoList.id, { todos })
   }
 
-  const handleEnterPress = (event, _) => {
-    if (event.key === 'Enter' && event.target.value !== '') {
+  const handleEnterPress = (event) => {
+    if (event.key === 'Enter' && event.target.value) {
       event.preventDefault()
       handleSubmit()
-      setTodos([...todos, ''])
+      addTodo()
 
       setTimeout(() => {
         const inputs = document.querySelectorAll('input[type="text"]')
-        const newInput = inputs[inputs.length - 1]
-        newInput.focus()
+        inputs[inputs.length - 1]?.focus()
       }, 0)
     }
   }
@@ -50,44 +36,19 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
           onSubmit={handleSubmit}
           style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}
         >
-          {todos.map((name, index) => (
-            <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
-              <Typography sx={{ margin: '8px' }} variant='h6'>
-                {index + 1}
-              </Typography>
-              <TextField
-                sx={{ flexGrow: 1, marginTop: '1rem' }}
-                label='What to do?'
-                value={name}
-                onChange={(event) => {
-                  setTodos([
-                    ...todos.slice(0, index),
-                    event.target.value,
-                    ...todos.slice(index + 1),
-                  ])
-                }}
-                onKeyDown={(event) => handleEnterPress(event, index)}
-              />
-              <Button
-                sx={{ margin: '8px' }}
-                size='small'
-                color='secondary'
-                onClick={() => {
-                  setTodos([...todos.slice(0, index), ...todos.slice(index + 1)])
-                }}
-              >
-                <DeleteIcon />
-              </Button>
-            </div>
+          {todos.map((todo, index) => (
+            <TodoItem
+              key={index}
+              todo={todo}
+              index={index}
+              onContentChange={(content) => updateTodo(index, content)}
+              onToggle={() => toggleTodo(index)}
+              onDelete={() => deleteTodo(index)}
+              onKeyDown={handleEnterPress}
+            />
           ))}
           <CardActions>
-            <Button
-              type='button'
-              color='primary'
-              onClick={() => {
-                setTodos([...todos, ''])
-              }}
-            >
+            <Button type='button' color='primary' onClick={addTodo}>
               Add Todo <AddIcon />
             </Button>
             <Button type='submit' variant='contained' color='primary'>

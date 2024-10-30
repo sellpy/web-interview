@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useRef } from 'react'
+import React, { Fragment, useState, useEffect, useRef, useCallback } from 'react'
 import {
   Card,
   CardContent,
@@ -26,18 +26,18 @@ export const TodoLists = ({ style }) => {
   const [newListName, setNewListName] = useState('')
   const inputRef = useRef(null)
 
-  const loadTodoLists = async () => {
+  const loadTodoLists = useCallback(async () => {
     try {
       const lists = await TodoListsApi.fetchTodoLists()
       setTodoLists(lists)
     } catch (error) {
       console.error('Error loading todo lists:', error)
     }
-  }
+  }, [])
 
   useEffect(() => {
     loadTodoLists()
-  }, [])
+  }, [loadTodoLists])
 
   useEffect(() => {
     if (isAddingNew) {
@@ -72,6 +72,23 @@ export const TodoLists = ({ style }) => {
       }
     } catch (error) {
       console.error('Error deleting todo list:', error)
+    }
+  }
+
+  const handleSaveTodoList = async (id, { todos }) => {
+    try {
+      const listToUpdate = todoLists[id]
+      setTodoLists((prevLists) => ({
+        ...prevLists,
+        [id]: {
+          ...listToUpdate,
+          todos,
+        },
+      }))
+
+      await TodoListsApi.saveTodoList(id, listToUpdate.title, todos)
+    } catch (error) {
+      console.error('Error saving todo list:', error)
     }
   }
 
@@ -159,19 +176,7 @@ export const TodoLists = ({ style }) => {
         <TodoListForm
           key={activeList}
           todoList={todoLists[activeList]}
-          saveTodoList={(id, { todos }) => {
-            const listToUpdate = todoLists[id]
-            TodoListsApi.saveTodoList(id, listToUpdate.title, todos)
-              .then(() => {
-                setTodoLists({
-                  ...todoLists,
-                  [id]: { ...listToUpdate, todos },
-                })
-              })
-              .catch((error) => {
-                console.error('Error saving todo list:', error)
-              })
-          }}
+          saveTodoList={handleSaveTodoList}
         />
       )}
     </Fragment>

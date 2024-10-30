@@ -30,11 +30,16 @@ app.get('/api/todo-lists', (_, res) => {
     const result = {}
 
     for (const list of lists) {
-      const todos = db.prepare('SELECT content FROM todos WHERE list_id = ?').all(list.id)
+      const todos = db
+        .prepare('SELECT content, completed FROM todos WHERE list_id = ?')
+        .all(list.id)
       result[list.id] = {
         id: list.id,
         title: list.title,
-        todos: todos.map((todo) => todo.content),
+        todos: todos.map((todo) => ({
+          content: todo.content,
+          completed: todo.completed,
+        })),
       }
     }
 
@@ -74,14 +79,16 @@ app.post('/api/todo-lists/:id', (req, res) => {
 
   const insertList = db.prepare('INSERT OR REPLACE INTO todo_lists (id, title) VALUES (?, ?)')
   const deleteTodos = db.prepare('DELETE FROM todos WHERE list_id = ?')
-  const insertTodo = db.prepare('INSERT INTO todos (list_id, content) VALUES (?, ?)')
+  const insertTodo = db.prepare('INSERT INTO todos (list_id, content, completed) VALUES (?, ?, ?)')
 
   try {
-    insertList.run(id, title)
+    insertList.run(id, title || '')
     deleteTodos.run(id)
 
     for (const todo of todos) {
-      insertTodo.run(id, todo)
+      const content = todo.content || ''
+      const completed = todo.completed ? 1 : 0
+      insertTodo.run(id, content, completed)
     }
 
     res.json({ success: true })
