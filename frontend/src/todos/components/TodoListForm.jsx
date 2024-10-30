@@ -1,14 +1,45 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { TextField, Card, CardContent, CardActions, Button, Typography } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
+import { useDebounce } from '../../utils/hooks'
 
 export const TodoListForm = ({ todoList, saveTodoList }) => {
   const [todos, setTodos] = useState(todoList.todos)
+  const saveCallback = useCallback(
+    (todos) => {
+      saveTodoList(todoList.id, { todos })
+    },
+    [todoList.id, saveTodoList]
+  )
+
+  const debouncedSave = useDebounce(saveCallback, 400)
+
+  useEffect(() => {
+    if (todos !== todoList.todos) {
+      debouncedSave(todos)
+    }
+  }, [todos, debouncedSave, todoList.todos])
 
   const handleSubmit = (event) => {
-    event.preventDefault()
+    if (event) {
+      event.preventDefault()
+    }
     saveTodoList(todoList.id, { todos })
+  }
+
+  const handleEnterPress = (event, _) => {
+    if (event.key === 'Enter' && event.target.value !== '') {
+      event.preventDefault()
+      handleSubmit()
+      setTodos([...todos, ''])
+
+      setTimeout(() => {
+        const inputs = document.querySelectorAll('input[type="text"]')
+        const newInput = inputs[inputs.length - 1]
+        newInput.focus()
+      }, 0)
+    }
   }
 
   return (
@@ -30,33 +61,19 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
                 value={name}
                 onChange={(event) => {
                   setTodos([
-                    // immutable update
                     ...todos.slice(0, index),
                     event.target.value,
                     ...todos.slice(index + 1),
                   ])
                 }}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') {
-                    event.preventDefault()
-                    setTodos([...todos, ''])
-                    setTimeout(() => {
-                      const inputs = document.querySelectorAll('input[type="text"]')
-                      const newInput = inputs[inputs.length - 1]
-                      newInput.focus()
-                    }, 0)
-                  }
-                }}
+                onKeyDown={(event) => handleEnterPress(event, index)}
               />
               <Button
                 sx={{ margin: '8px' }}
                 size='small'
                 color='secondary'
                 onClick={() => {
-                  setTodos(
-                    // immutable delete
-                    [...todos.slice(0, index), ...todos.slice(index + 1)]
-                  )
+                  setTodos([...todos.slice(0, index), ...todos.slice(index + 1)])
                 }}
               >
                 <DeleteIcon />
