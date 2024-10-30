@@ -36,17 +36,27 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
                     ...todos.slice(index + 1),
                   ])
                 }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault()
+                    setTodos([...todos, ''])
+                    setTimeout(() => {
+                      const inputs = document.querySelectorAll('input[type="text"]')
+                      const newInput = inputs[inputs.length - 1]
+                      newInput.focus()
+                    }, 0)
+                  }
+                }}
               />
               <Button
                 sx={{ margin: '8px' }}
                 size='small'
                 color='secondary'
                 onClick={() => {
-                  setTodos([
+                  setTodos(
                     // immutable delete
-                    ...todos.slice(0, index),
-                    ...todos.slice(index + 1),
-                  ])
+                    [...todos.slice(0, index), ...todos.slice(index + 1)]
+                  )
                 }}
               >
                 <DeleteIcon />

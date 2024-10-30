@@ -26,7 +26,7 @@ db.exec(`
 
 app.get('/api/todo-lists', (_, res) => {
   try {
-    const lists = db.prepare('SELECT * FROM todo_lists').all()
+    const lists = db.prepare('SELECT * FROM todo_lists ORDER BY id').all()
     const result = {}
 
     for (const list of lists) {
@@ -83,6 +83,23 @@ app.post('/api/todo-lists/:id', (req, res) => {
     for (const todo of todos) {
       insertTodo.run(id, todo)
     }
+
+    res.json({ success: true })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+app.delete('/api/todo-lists/:id', (req, res) => {
+  const { id } = req.params
+  const deleteList = db.prepare('DELETE FROM todo_lists WHERE id = ?')
+  const deleteTodos = db.prepare('DELETE FROM todos WHERE list_id = ?')
+
+  try {
+    db.transaction(() => {
+      deleteTodos.run(id)
+      deleteList.run(id)
+    })()
 
     res.json({ success: true })
   } catch (error) {
