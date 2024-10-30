@@ -13,11 +13,6 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
     if (event) {
       event.preventDefault()
     }
-
-    const lastTodo = todos[todos.length - 1]
-    if (lastTodo && lastTodo.content) {
-      saveTodoList(todoList.id, { todos })
-    }
   }
 
   const handleEnterPress = (event) => {
