@@ -66,7 +66,10 @@ export const TodoLists = ({ style }) => {
   const handleDeleteList = async (id) => {
     try {
       await TodoListsApi.deleteTodoList(id)
-      setTodoLists(todoLists.filter((list) => list.id !== id))
+      await loadTodoLists()
+      if (activeList === id) {
+        setActiveList(undefined)
+      }
     } catch (error) {
       console.error('Error deleting todo list:', error)
     }
