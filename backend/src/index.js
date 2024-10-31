@@ -9,20 +9,36 @@ const db = new Database('todos.db')
 app.use(cors())
 app.use(express.json())
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS todo_lists (
-    id TEXT PRIMARY KEY,
-    title TEXT NOT NULL
-  );
+db.transaction(() => {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS todos_new (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      list_id TEXT NOT NULL,
+      content TEXT NOT NULL,
+      completed BOOLEAN DEFAULT 0,
+      completed_at TEXT,
+      due_date TEXT,
+      FOREIGN KEY (list_id) REFERENCES todo_lists(id)
+    );
 
-  CREATE TABLE IF NOT EXISTS todos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    list_id TEXT NOT NULL,
-    content TEXT NOT NULL,
-    completed BOOLEAN DEFAULT 0,
-    FOREIGN KEY (list_id) REFERENCES todo_lists(id)
-  );
-`)
+    -- Copy existing data to the new table
+    INSERT INTO todos_new (id, list_id, content, completed, due_date)
+    SELECT id, list_id, content, completed, due_date
+    FROM todos;
+
+    -- Drop the old table
+    DROP TABLE IF EXISTS todos;
+
+    -- Rename the new table to the original name
+    ALTER TABLE todos_new RENAME TO todos;
+
+    -- Ensure todo_lists table exists
+    CREATE TABLE IF NOT EXISTS todo_lists (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL
+    );
+  `)
+})()
 
 app.get('/api/todo-lists', (_, res) => {
   try {
@@ -31,7 +47,7 @@ app.get('/api/todo-lists', (_, res) => {
 
     for (const list of lists) {
       const todos = db
-        .prepare('SELECT content, completed FROM todos WHERE list_id = ?')
+        .prepare('SELECT content, completed, completed_at, due_date FROM todos WHERE list_id = ?')
         .all(list.id)
       result[list.id] = {
         id: list.id,
@@ -39,6 +55,8 @@ app.get('/api/todo-lists', (_, res) => {
         todos: todos.map((todo) => ({
           content: todo.content,
           completed: todo.completed,
+          completedAt: todo.completed_at,
+          dueDate: todo.due_date,
         })),
       }
     }
@@ -59,12 +77,19 @@ app.get('/api/todo-lists/:id', (req, res) => {
       return res.status(404).json({ error: 'List not found...' })
     }
 
-    const todos = db.prepare('SELECT content FROM todos WHERE list_id = ?').all(id)
+    const todos = db
+      .prepare('SELECT content, completed, completed_at, due_date FROM todos WHERE list_id = ?')
+      .all(id)
 
     const result = {
       id: list.id,
       title: list.title,
-      todos: todos.map((todo) => todo.content),
+      todos: todos.map((todo) => ({
+        content: todo.content,
+        completed: todo.completed,
+        completedAt: todo.completed_at,
+        dueDate: todo.due_date,
+      })),
     }
 
     res.json(result)
@@ -79,17 +104,25 @@ app.post('/api/todo-lists/:id', (req, res) => {
 
   const insertList = db.prepare('INSERT OR REPLACE INTO todo_lists (id, title) VALUES (?, ?)')
   const deleteTodos = db.prepare('DELETE FROM todos WHERE list_id = ?')
-  const insertTodo = db.prepare('INSERT INTO todos (list_id, content, completed) VALUES (?, ?, ?)')
+  const insertTodo = db.prepare(
+    'INSERT INTO todos (list_id, content, completed, completed_at, due_date) VALUES (?, ?, ?, ?, ?)'
+  )
 
   try {
-    insertList.run(id, title || '')
-    deleteTodos.run(id)
+    db.transaction(() => {
+      insertList.run(id, title || '')
+      deleteTodos.run(id)
 
-    for (const todo of todos) {
-      const content = todo.content || ''
-      const completed = todo.completed ? 1 : 0
-      insertTodo.run(id, content, completed)
-    }
+      for (const todo of todos) {
+        insertTodo.run(
+          id,
+          todo.content || '',
+          todo.completed ? 1 : 0,
+          todo.completedAt || null,
+          todo.dueDate || null
+        )
+      }
+    })()
 
     res.json({ success: true })
   } catch (error) {

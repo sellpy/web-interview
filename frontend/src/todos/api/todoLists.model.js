@@ -52,6 +52,7 @@ export class TodoListsApi {
         todos: todos.map((todo) => ({
           content: todo.content || '',
           completed: todo.completed ? 1 : 0,
+          dueDate: todo.dueDate || null,
         })),
       }),
     })

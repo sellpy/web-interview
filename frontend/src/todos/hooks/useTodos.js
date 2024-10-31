@@ -6,7 +6,10 @@ const areTodosEqual = (todos1, todos2) => {
 
   return todos1.every(
     (todo, index) =>
-      todo.content === todos2[index].content && todo.completed === todos2[index].completed
+      todo.content === todos2[index].content &&
+      todo.completed === todos2[index].completed &&
+      todo.dueDate === todos2[index].dueDate &&
+      todo.completedAt === todos2[index].completedAt
   )
 }
 
@@ -31,7 +34,14 @@ export const useTodos = (initialTodos, onSave) => {
   }, [todos])
 
   const addTodo = () => {
-    setTodos([...todos, { content: '', completed: false }])
+    setTodos([
+      ...todos,
+      {
+        content: '',
+        completed: false,
+        dueDate: null, // explicitly initialize dueDate
+      },
+    ])
   }
 
   const updateTodo = (index, content) => {
@@ -41,9 +51,11 @@ export const useTodos = (initialTodos, onSave) => {
 
   const toggleTodo = (index) => {
     const newTodos = [...todos]
+    const isCompleting = !newTodos[index].completed
     newTodos[index] = {
       ...newTodos[index],
-      completed: !newTodos[index].completed,
+      completed: isCompleting,
+      completedAt: isCompleting ? new Date().toISOString() : null,
     }
     setTodos(newTodos)
     setIsDirty(true)
@@ -54,11 +66,17 @@ export const useTodos = (initialTodos, onSave) => {
     setIsDirty(true)
   }
 
+  const updateTodoDueDate = (index, dueDate) => {
+    setTodos([...todos.slice(0, index), { ...todos[index], dueDate }, ...todos.slice(index + 1)])
+    setIsDirty(true)
+  }
+
   return {
     todos,
     addTodo,
     updateTodo,
     toggleTodo,
     deleteTodo,
+    updateTodoDueDate,
   }
 }

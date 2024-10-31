@@ -1,12 +1,14 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Card, CardContent, CardActions, Button, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { TodoItem } from './TodoItem'
 import { useTodos } from '../hooks/useTodos'
 
 export const TodoListForm = ({ todoList, saveTodoList }) => {
-  const { todos, addTodo, updateTodo, toggleTodo, deleteTodo } = useTodos(todoList.todos, (todos) =>
-    saveTodoList(todoList.id, { todos })
+  const newInputRef = useRef(null)
+  const { todos, addTodo, updateTodo, toggleTodo, deleteTodo, updateTodoDueDate } = useTodos(
+    todoList.todos,
+    (todos) => saveTodoList(todoList.id, { todos })
   )
 
   const handleSubmit = (event) => {
@@ -20,11 +22,6 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
       event.preventDefault()
       handleSubmit()
       addTodo()
-
-      setTimeout(() => {
-        const inputs = document.querySelectorAll('input[type="text"]')
-        inputs[inputs.length - 1]?.focus()
-      }, 0)
     }
   }
 
@@ -41,10 +38,12 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
               key={index}
               todo={todo}
               index={index}
+              ref={index === todos.length - 1 ? newInputRef : null}
               onContentChange={(content) => updateTodo(index, content)}
               onToggle={() => toggleTodo(index)}
               onDelete={() => deleteTodo(index)}
               onKeyDown={handleEnterPress}
+              onDueDateChange={(dueDate) => updateTodoDueDate(index, dueDate)}
             />
           ))}
           <CardActions>
