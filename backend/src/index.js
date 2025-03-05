@@ -39,3 +39,25 @@ const saveData = (data) => {
   }
 }
 saveData()
+
+app.post('/data', (req, res) => {
+  console.log('POST request received!')
+  const storedData = readData()
+  console.log('storedData', storedData)
+  const requestData = req.body
+  console.log('requestData', requestData)
+
+  if (storedData[requestData.listId]) {
+    storedData[requestData.listId].todos = requestData.todos
+    storedData[requestData.listId].todos.splice(
+      //kolla om jag ska skita i splice och använda spread
+      0,
+      storedData[requestData.listId].todos.length,
+      ...requestData.todos
+    ) //0 är startindex, storedData.todos.length anger att hela arrayen tas bort, och ...request.todos sprider in alla element från request.todos.
+    saveData(storedData)
+    res.status(200).json({ message: 'Data updated successfully!' }) //Behövs verkligen .json här för bara en kort text?
+  } else {
+    res.status(404).json({ message: 'List not found!' })
+  }
+})
