@@ -9,51 +9,122 @@ import {
   Typography,
 } from '@mui/material'
 import ReceiptIcon from '@mui/icons-material/Receipt'
+import CheckListCompleteIcon from '@mui/icons-material/ChecklistRtl'
+import CheckListIncompleteIcon from '@mui/icons-material/Rule'
 import { TodoListForm } from './TodoListForm'
 
-// Simulate network
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+const BASE_URL = 'http://localhost:3001'
 
-const fetchTodoLists = () => {
-  return sleep(1000).then(() =>
-    Promise.resolve({
-      '0000000001': {
-        id: '0000000001',
-        title: 'First List',
-        todos: ['First todo of first list!'],
-      },
-      '0000000002': {
-        id: '0000000002',
-        title: 'Second List',
-        todos: ['First todo of second list!'],
-      },
+// Debounce function to limit the rate at which a function can fire
+const debounce = (fn, delay) => {
+  let timer
+  return (...args) => {
+    clearTimeout(timer)
+
+    return new Promise((resolve, reject) => {
+      timer = setTimeout(async () => {
+        try {
+          const result = await fn(...args)
+          resolve(result)
+        } catch (error) {
+          reject(error)
+        }
+      }, delay)
     })
-  )
+  }
 }
+
+const fetchTodoLists = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/todo-lists`)
+    if (!response.ok) {
+      console.error(await response.text())
+      const errorMessage = `Failed to fetch todo lists! Status: ${response.status} - ${response.statusText}`
+      throw new Error(errorMessage)
+    }
+    return await response.json()
+  } catch (error) {
+    throw error
+  }
+}
+
+const updateTodoList = async (id, updatedList) => {
+  try {
+    const response = await fetch(`${BASE_URL}/todo-lists/${id}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedList),
+    })
+    if (!response.ok) {
+      console.error(await response.text())
+      const errorMessage = `Failed to save todo lists! Status: ${response.status} - ${response.statusText}`
+      throw new Error(errorMessage)
+    }
+    return await response.json()
+  } catch (error) {
+    throw error
+  }
+}
+
+const debouncedUpdateTodoList = debounce(updateTodoList, 500)
 
 export const TodoLists = ({ style }) => {
   const [todoLists, setTodoLists] = useState({})
   const [activeList, setActiveList] = useState()
 
+  const isTodoListCompleted = (todoList) =>
+    todoList?.todos?.length > 0 && todoList?.todos?.every((todo) => todo.isCompleted)
+
+  const handleUpdateTodoList = async (id, { todos }) => {
+    const listToUpdate = todoLists[id]
+    try {
+      const responseData = await debouncedUpdateTodoList(id, { title: listToUpdate.title, todos })
+      setTodoLists({
+        ...todoLists,
+        [id]: responseData,
+      })
+    } catch (error) {
+      alert(error.message)
+    }
+  }
+
   useEffect(() => {
-    fetchTodoLists().then(setTodoLists)
+    fetchTodoLists()
+      .then((responseData) => {
+        setTodoLists(responseData)
+      })
+      .catch((error) => {
+        alert(error.message)
+      })
   }, [])
 
-  if (!Object.keys(todoLists).length) return null
+  if (!Object.keys(todoLists)?.length) return null
   return (
     <Fragment>
       <Card style={style}>
         <CardContent>
           <Typography component='h2'>My Todo Lists</Typography>
           <List>
-            {Object.keys(todoLists).map((key) => (
-              <ListItemButton key={key} onClick={() => setActiveList(key)}>
-                <ListItemIcon>
-                  <ReceiptIcon />
-                </ListItemIcon>
-                <ListItemText primary={todoLists[key].title} />
-              </ListItemButton>
-            ))}
+            {Object.keys(todoLists).map((key) => {
+              const todoList = todoLists[key]
+              return (
+                <ListItemButton key={key} onClick={() => setActiveList(key)}>
+                  <ListItemIcon>
+                    <ReceiptIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={todoList.title} />
+                  <ListItemIcon>
+                    {isTodoListCompleted(todoList) ? (
+                      <CheckListCompleteIcon color='success' />
+                    ) : (
+                      <CheckListIncompleteIcon />
+                    )}
+                  </ListItemIcon>
+                </ListItemButton>
+              )
+            })}
           </List>
         </CardContent>
       </Card>
@@ -62,11 +133,7 @@ export const TodoLists = ({ style }) => {
           key={activeList} // use key to make React recreate component to reset internal state
           todoList={todoLists[activeList]}
           saveTodoList={(id, { todos }) => {
-            const listToUpdate = todoLists[id]
-            setTodoLists({
-              ...todoLists,
-              [id]: { ...listToUpdate, todos },
-            })
+            handleUpdateTodoList(id, { todos })
           }}
         />
       )}
