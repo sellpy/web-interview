@@ -9,7 +9,7 @@ Below follows one main task and 4 additional tasks. Your assignment is to comple
 If you feel constrained by time (which is totally fine!), **prioritize quality over quantity**.
 
 ### Main Task
-Persist the todo lists on the server. Persisting in a database is not required. (Simple js structures on the server is fine). If you do go for an actual DB (again not required), be sure to include instructions of how to get it up and running.
+Persist the todo lists on the server. Persisting in a database is not required, i.e. simple JS structures like objects/arrays that don't persist between server restarts are fine. If you do go for an actual DB (again not required), be sure to include instructions of how to get it up and running.
 
 ### Additional tasks
 - Don't require users to press save when an item is added/edited in the todo list. (Autosave functionality)
