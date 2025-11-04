@@ -24,6 +24,8 @@ If you have developed without ESLint set up, run `npm run lint` in both `/backen
 
 Send a link to your forked repository to your contact at Sellpy. Don't forget to mention which tasks you completed.
 
+Don't forget to bring your computer to the interview, as you'll need it to make code changes during the session!
+
 ## Prerequisites
 
 NodeJS - if you don't already have it installed, check out [nvm](https://github.com/nvm-sh/nvm).
