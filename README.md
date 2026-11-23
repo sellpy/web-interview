@@ -38,7 +38,9 @@ Fork the repository (see top-right button on GitHub) and clone the fork to your 
  - Run `npm ci`
  - Run `npm start`
 
-The backend includes [`@seald-io/nedb`](https://github.com/seald/nedb), chosen for MongoDB-style document storage with an npm-only setup rather than a separate database server. Import `Datastore` from `@seald-io/nedb` and use `new Datastore({ inMemoryOnly: true })` for data that lasts until the server restarts. It is not wired into the app; implementing persistence remains part of the assignment. Reconsider this dependency if full MongoDB compatibility or shared storage across processes is needed.
+The backend uses [`@seald-io/nedb`](https://github.com/seald/nedb) for in-memory document storage with MongoDB-style queries. No separate database installation is needed. In `backend/src/db.js`, the `UserMessages` collection is seeded with `{ key: 'greeting', value: 'Hello World!' }` on startup, and `GET /` reads the greeting from it. Data is cleared when the server restarts. Use this as an example for the todo persistence assignment.
+
+Run `npm test` in `/backend` to check the greeting endpoint.
 
 ### To start the frontend:
 

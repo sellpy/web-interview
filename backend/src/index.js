@@ -1,13 +1,24 @@
 import express from 'express'
 import cors from 'cors'
+import { UserMessages } from './db.js'
 
-const app = express()
+export const app = express()
 
 app.use(cors())
 app.use(express.json())
 
 const PORT = 3001
 
-app.get('/', (req, res) => res.send('Hello World!'))
+app.get('/', async (req, res, next) => {
+  try {
+    const message = await UserMessages.findOneAsync({ key: 'greeting' })
+    if (!message) throw new Error('Greeting not found in UserMessages')
+    res.send(message.value)
+  } catch (error) {
+    next(error)
+  }
+})
 
-app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))
+if (import.meta.main) {
+  app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))
+}
