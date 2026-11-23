@@ -28,7 +28,7 @@ Don't forget to bring your computer to the interview, as you'll need it to make 
 
 ## Prerequisites
 
-NodeJS - if you don't already have it installed, check out [nvm](https://github.com/nvm-sh/nvm).
+Node.js 26 is required. The project's `.nvmrc` selects Node 26, with npm 11.20.0 bundled. If you don't already have it installed, check out [nvm](https://github.com/nvm-sh/nvm).
 
 ## Getting started
 Fork the repository (see top-right button on GitHub) and clone the fork to your computer.
@@ -44,7 +44,9 @@ Fork the repository (see top-right button on GitHub) and clone the fork to your 
  - Run `npm ci`
  - Run `npm start`
 
- A browsertab will automatically open and load the app.
+ A browser tab will automatically open at http://localhost:3000 and load the app using Vite.
+
+ Run `npm run build` in `/frontend` to create a production build in `dist`, and `npm run preview` to preview it locally.
 
 ### Development set-up
 If you don't have a favorite editor we highly recommend [VSCode](https://code.visualstudio.com). We've also had some ESLint rules set up which will help you catch bugs etc. If you're using VSCode, install the regular [ESLint plugin](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) and you should be good to go!
