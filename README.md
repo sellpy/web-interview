@@ -9,7 +9,7 @@ Below follows one main task and 4 additional tasks. Your assignment is to comple
 If you feel constrained by time (which is totally fine!), **prioritize quality over quantity**.
 
 ### Main Task
-Persist the todo lists on the server. Persisting in a database is not required, i.e. simple JS structures like objects/arrays that don't persist between server restarts are fine. If you do go for an actual DB (again not required), be sure to include instructions of how to get it up and running.
+Persist the todo lists on the server using the included `@seald-io/nedb` database. See the NeDB example in "To start the backend" below.
 
 ### Additional tasks
 - Don't require users to press save when an item is added/edited in the todo list. (Autosave functionality)
@@ -37,6 +37,9 @@ Fork the repository (see top-right button on GitHub) and clone the fork to your 
  - Navigate to the backend folder
  - Run `npm ci`
  - Run `npm start`
+
+The backend uses [`@seald-io/nedb`](https://github.com/seald/nedb) for document storage with MongoDB-style queries. No separate database installation is needed. In `backend/src/db.js`, the `UserMessages` collection is seeded with `{ key: 'greeting', value: 'Hello World!' }` on the first startup, and `GET /` reads the greeting from it. Data is saved in `backend/db`, which is gitignored. Use this as an example for the todo persistence assignment.
+
 
 ### To start the frontend:
 
