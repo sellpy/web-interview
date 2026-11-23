@@ -38,6 +38,8 @@ Fork the repository (see top-right button on GitHub) and clone the fork to your 
  - Run `npm ci`
  - Run `npm start`
 
+The backend includes [`@seald-io/nedb`](https://github.com/seald/nedb), chosen for MongoDB-style document storage with an npm-only setup rather than a separate database server. Import `Datastore` from `@seald-io/nedb` and use `new Datastore({ inMemoryOnly: true })` for data that lasts until the server restarts. It is not wired into the app; implementing persistence remains part of the assignment. Reconsider this dependency if full MongoDB compatibility or shared storage across processes is needed.
+
 ### To start the frontend:
 
  - Navigate to the frontend folder
