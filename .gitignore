@@ -4,4 +4,5 @@ frontend/dist
 
 # Backend
 backend/node_modules
+backend/db
 backend/npm-debug.log
