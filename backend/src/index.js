@@ -12,8 +12,7 @@ const PORT = 3001
 app.get('/', async (req, res, next) => {
   try {
     const message = await UserMessages.findOneAsync({ key: 'greeting' })
-    if (!message) throw new Error('Greeting not found in UserMessages')
-    res.send(message.value)
+    res.send(message?.value)
   } catch (error) {
     next(error)
   }
